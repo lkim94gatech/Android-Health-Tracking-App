@@ -25,6 +25,22 @@
             android:name=".HomeScreen"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".IngredientScreen"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".RecipeScreen"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".ShoppingListScreen"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".InputMealScreen"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>
