@@ -3,20 +3,20 @@
 
     <item
         android:icon="@drawable/input_meal_24"
-        android:id="@+id/Meals"
+        android:id="@+id/bottom_meals"
         android:title="Input Meal"/>
     <item
         android:icon="@drawable/recipes_24"
-        android:id="@+id/Recipes"
+        android:id="@+id/bottom_recipes"
         android:title="Recipes"/>
     <item
         android:icon="@drawable/ingredient_24"
-        android:id="@+id/Ingredients"
+        android:id="@+id/bottom_ingredients"
         android:title="Ingredients"
         />
     <item
         android:icon="@drawable/shopping_list_24"
-        android:id="@+id/Shopping"
+        android:id="@+id/bottom_shopping"
         android:title="Shopping List"
         />
 </menu>
