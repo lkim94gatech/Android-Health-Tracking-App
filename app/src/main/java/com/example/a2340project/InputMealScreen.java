@@ -37,4 +37,5 @@ public class InputMealScreen extends AppCompatActivity {
                 return false;
             }
         });
-    }}
+    }
+}
