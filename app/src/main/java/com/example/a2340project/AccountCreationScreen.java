@@ -25,11 +25,16 @@ public class AccountCreationScreen extends AppCompatActivity {
     private AccountCreationViewModel viewModel;
     private EditText newUsernameText;
     private EditText newPasswordText;
+
+    private FirebaseAuth mAuth;
+    private String username;
+    private String password;
+    private static final String TAG = AccountCreationScreen.class.getSimpleName();
+
     private FirebaseDatabase myDatabase;
     private DatabaseReference myDatabaseReference;
 
     // onCreate to initialize username, password, buttons, and view model
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_creation);
