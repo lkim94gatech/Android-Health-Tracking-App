@@ -41,6 +41,14 @@
             android:name=".InputMealScreen"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".AccountCreationScreen"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".LoginScreen"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

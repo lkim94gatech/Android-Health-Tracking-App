@@ -2,13 +2,11 @@ package com.example.a2340project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-<<<<<<< HEAD
-=======
 import com.google.android.material.bottomnavigation.BottomNavigationView;
->>>>>>> 627c65982d5ca83de98cd7a2d35229168a50249c
 
 /**
  * to code or not to code.  I am bored.
@@ -20,8 +18,6 @@ public class HomeScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-<<<<<<< HEAD
-=======
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -42,6 +38,17 @@ public class HomeScreen extends AppCompatActivity {
                 return false;
             }
         });
->>>>>>> 627c65982d5ca83de98cd7a2d35229168a50249c
+
+        //login and create account buttons
+        Button accountButton = findViewById(R.id.accountCreationButton);
+        accountButton.setOnClickListener(item -> {
+            startActivity(new Intent(HomeScreen.this, AccountCreationScreen.class));
+        });
+
+        Button loginButton = findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(item -> {
+            startActivity(new Intent(HomeScreen.this, LoginScreen.class));
+        });
+
     }
 }
