@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "2340Project"
+rootProject.name = "CS2340A_Team18"
 include ':app'
