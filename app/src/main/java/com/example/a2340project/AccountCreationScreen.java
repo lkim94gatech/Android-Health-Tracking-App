@@ -24,7 +24,7 @@ public class AccountCreationScreen extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String username;
     private String password;
-    private static final String TAG = "AccountCreationScreenActivity";
+    private static final String TAG = AccountCreationScreen.class.getSimpleName();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_creation);

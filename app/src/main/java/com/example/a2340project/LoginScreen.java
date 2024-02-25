@@ -23,7 +23,7 @@ public class LoginScreen extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String username;
     private String password;
-    private static final String TAG = "LoginScreenActivity";
+    private static final String TAG = LoginScreen.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
