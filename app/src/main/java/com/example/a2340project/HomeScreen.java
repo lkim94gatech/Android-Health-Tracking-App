@@ -39,16 +39,15 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
-        //login and create account buttons
+        //account creation button
         Button accountButton = findViewById(R.id.accountCreationButton);
         accountButton.setOnClickListener(item -> {
             startActivity(new Intent(HomeScreen.this, AccountCreationScreen.class));
         });
-
+        //login button
         Button loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener(item -> {
             startActivity(new Intent(HomeScreen.this, LoginScreen.class));
         });
-
     }
 }
