@@ -4,13 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 
 import android.os.Bundle;
-import com.google.firebase.Firebase;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.provider.FirebaseInitProvider;
-import com.google.firebase.auth.GoogleAuthCredential;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     sleep(3000);
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
-                }finally {
+                } finally {
                     startActivity(new Intent(MainActivity.this, LoginScreen.class));
                 }
             }

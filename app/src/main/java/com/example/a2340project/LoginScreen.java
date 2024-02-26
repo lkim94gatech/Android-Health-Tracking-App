@@ -1,7 +1,6 @@
 package com.example.a2340project;
 
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,8 +22,6 @@ public class LoginScreen extends AppCompatActivity {
     private EditText usernameText;
     private EditText passwordText;
     private FirebaseAuth mAuth;
-    private String username;
-    private String password;
     private static final String TAG = LoginScreen.class.getSimpleName();
 
     @Override
@@ -61,22 +58,24 @@ public class LoginScreen extends AppCompatActivity {
 
                 } else {
                     mAuth.signInWithEmailAndPassword(username, password)
-                            .addOnCompleteListener(LoginScreen.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        // Sign in success
-                                        Log.d(TAG, "signIn:success");
-                                        FirebaseUser user = mAuth.getCurrentUser();
-                                        startActivity(intent);
-                                    } else {
-                                        // If sign in fails
-                                        Log.w(TAG, "signIn:failure", task.getException());
-                                        Toast.makeText(LoginScreen.this, "Authentication failed.",
-                                                Toast.LENGTH_SHORT).show();
+                            .addOnCompleteListener(LoginScreen.this,
+                                    new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            // Sign in success
+                                            Log.d(TAG, "signIn:success");
+                                            FirebaseUser user = mAuth.getCurrentUser();
+                                            startActivity(intent);
+                                        } else {
+                                            // If sign in fails
+                                            Log.w(TAG, "signIn:failure", task.getException());
+                                            Toast.makeText(LoginScreen.this,
+                                                    "Authentication failed.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
-                            });
+                                });
                 }
             }
         });

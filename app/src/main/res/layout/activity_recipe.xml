@@ -13,16 +13,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
+        <TextView
             android:id="@+id/viewTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:ems="10"
-            android:inputType="text"
-            android:text="Recipe"
-            android:textAlignment="center"
-            android:textSize="24sp" />
+            android:gravity="center"
+            android:text="Recipes"
+            android:textSize="60sp" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
