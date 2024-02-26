@@ -2,6 +2,7 @@ package com.example.a2340project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,14 @@ public class HomeScreen extends AppCompatActivity {
         if(currentUser == null){
             startActivity(new Intent(HomeScreen.this, LoginScreen.class));
         }
+        //log out button
+        Button logOutButton = findViewById(R.id.logOutButton);
+        logOutButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(HomeScreen.this, LoginScreen.class));
+            }
+        });
 
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
