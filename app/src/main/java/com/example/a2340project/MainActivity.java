@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
                 }catch (Exception e) {
                     e.printStackTrace();
                 }finally {
-                    startActivity(new Intent(MainActivity.this, HomeScreen.class));
+                    startActivity(new Intent(MainActivity.this, LoginScreen.class));
                 }
             }
         };

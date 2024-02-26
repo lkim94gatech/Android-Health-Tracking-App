@@ -5,6 +5,13 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <TextView
+        android:id="@+id/SignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign In"
+        android:textSize="60sp" />
+
     <EditText
         android:id="@+id/usernameText"
         android:layout_width="match_parent"
@@ -16,7 +23,7 @@
     <EditText
         android:id="@+id/passwordText"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:hint="password"
         android:inputType="textPassword"
         android:translationY="600px" />
@@ -34,4 +41,21 @@
         android:layout_height="wrap_content"
         android:text="Create New Account"
         android:translationY="600px"/>
+
+    <TextView
+        android:id="@+id/Error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username or Password Contains Illegal Characters"
+        android:textColor="#FF0000"
+        android:textColorHint="#FF0000"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/Exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exit"
+        android:translationY="975px" />
+
 </LinearLayout>
