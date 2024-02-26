@@ -5,6 +5,13 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <TextView
+        android:id="@+id/newUsers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Users"
+        android:textSize="60sp" />
+
     <EditText
         android:id="@+id/createUsernameText"
         android:layout_width="match_parent"
@@ -34,4 +41,14 @@
         android:layout_height="wrap_content"
         android:text="Back to Login"
         android:translationY="600px"/>
+
+    <TextView
+        android:id="@+id/Error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username or Password Contains Illegal Characters"
+        android:textColor="#FF0000"
+        android:textColorHint="#FF0000"
+        android:visibility="gone" />
+
 </LinearLayout>
