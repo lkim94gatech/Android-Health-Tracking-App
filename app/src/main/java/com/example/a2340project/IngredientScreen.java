@@ -22,20 +22,18 @@ public class IngredientScreen extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.bottom_ingredients);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            int button_id = item.getItemId();
-            if (button_id == R.id.bottom_meals) {
+            int buttonID = item.getItemId();
+            if (buttonID == R.id.bottom_meals) {
                 startActivity(new Intent(IngredientScreen.this, InputMealScreen.class));
                 return true;
-            } else if (button_id == R.id.bottom_recipes) {
+            } else if (buttonID == R.id.bottom_recipes) {
                 startActivity(new Intent(IngredientScreen.this, RecipeScreen.class));
                 return true;
-            } else if (button_id == R.id.bottom_shopping) {
+            } else if (buttonID == R.id.bottom_shopping) {
                 startActivity(new Intent(IngredientScreen.this, ShoppingListScreen.class));
                 return true;
-            } else if (button_id == R.id.bottom_ingredients) {
-                return true;
             } else {
-                return false;
+                return buttonID == R.id.bottom_ingredients;
             }
         });
     }

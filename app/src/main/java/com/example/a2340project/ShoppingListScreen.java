@@ -21,16 +21,16 @@ public class ShoppingListScreen extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.bottom_shopping);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            int button_id = item.getItemId();
-            if (button_id == R.id.bottom_meals) {
+            int buttonID = item.getItemId();
+            if (buttonID == R.id.bottom_meals) {
                 startActivity(new Intent(ShoppingListScreen.this, InputMealScreen.class));
                 return true;
-            } else if (button_id == R.id.bottom_recipes) {
+            } else if (buttonID == R.id.bottom_recipes) {
                 startActivity(new Intent(ShoppingListScreen.this, RecipeScreen.class));
                 return true;
-            } else if (button_id == R.id.bottom_shopping) {
+            } else if (buttonID == R.id.bottom_shopping) {
                 return true;
-            } else if (button_id == R.id.bottom_ingredients) {
+            } else if (buttonID == R.id.bottom_ingredients) {
                 startActivity(new Intent(ShoppingListScreen.this, IngredientScreen.class));
                 return true;
             } else {

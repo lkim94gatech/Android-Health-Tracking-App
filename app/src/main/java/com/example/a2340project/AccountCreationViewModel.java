@@ -1,5 +1,4 @@
 package com.example.a2340project;
-import android.accounts.Account;
 
 public class AccountCreationViewModel {
     private static AccountCreationViewModel instance;
@@ -22,7 +21,8 @@ public class AccountCreationViewModel {
     }
 
     // returns accountCreationData (used to store in Firebase)
-    public AccountCreationData getAccountCreationData() { return accountCreationData; }
+    public AccountCreationData getAccountCreationData() {
+        return accountCreationData; }
 
     // resets data when page is opened
     public void updateData(String username, String password) {

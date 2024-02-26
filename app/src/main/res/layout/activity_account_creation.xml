@@ -12,11 +12,21 @@
         android:text="New Users"
         android:textSize="60sp" />
 
+    <TextView
+        android:id="@+id/Error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username or Password Contains Illegal Characters"
+        android:textColor="#FF0000"
+        android:textColorHint="#FF0000"
+        android:translationY="600px"
+        android:visibility="gone" />
+
     <EditText
         android:id="@+id/createUsernameText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="new username"
+        android:hint="new email"
         android:inputType="text"
         android:translationY="600px" />
 
@@ -41,14 +51,5 @@
         android:layout_height="wrap_content"
         android:text="Back to Login"
         android:translationY="600px"/>
-
-    <TextView
-        android:id="@+id/Error"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Username or Password Contains Illegal Characters"
-        android:textColor="#FF0000"
-        android:textColorHint="#FF0000"
-        android:visibility="gone" />
 
 </LinearLayout>

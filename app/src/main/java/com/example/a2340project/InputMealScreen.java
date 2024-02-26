@@ -21,16 +21,16 @@ public class InputMealScreen extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.bottom_meals);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            int button_id = item.getItemId();
-            if (button_id == R.id.bottom_meals) {
+            int buttonID = item.getItemId();
+            if (buttonID == R.id.bottom_meals) {
                 return true;
-            } else if (button_id == R.id.bottom_recipes) {
+            } else if (buttonID == R.id.bottom_recipes) {
                 startActivity(new Intent(InputMealScreen.this, RecipeScreen.class));
                 return true;
-            } else if (button_id == R.id.bottom_shopping) {
+            } else if (buttonID == R.id.bottom_shopping) {
                 startActivity(new Intent(InputMealScreen.this, ShoppingListScreen.class));
                 return true;
-            } else if (button_id == R.id.bottom_ingredients) {
+            } else if (buttonID == R.id.bottom_ingredients) {
                 startActivity(new Intent(InputMealScreen.this, IngredientScreen.class));
                 return true;
             } else {
