@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DatabaseReference.CompletionListener;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseReference;
 
 public class AccountCreationScreen extends AppCompatActivity {
     private AccountCreationViewModel viewModel;
@@ -31,9 +33,11 @@ public class AccountCreationScreen extends AppCompatActivity {
     private String username;
     private String password;
     private static final String TAG = AccountCreationScreen.class.getSimpleName();
-
     private FirebaseDatabase myDatabase;
     private DatabaseReference myDatabaseReference;
+
+
+    // onCreate to initialize username, password, buttons, and view model
 
     // onCreate to initialize username, password, buttons, and view model
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,27 +55,8 @@ public class AccountCreationScreen extends AppCompatActivity {
         createNewAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AccountCreationScreen.this, HomeScreen.class);
-
                 // i'm not 100% sure how these grab the text box data but it worked in 0.5
-                String newUsername = viewModel.getAccountCreationData().getUsername();
-                String newPassword = viewModel.getAccountCreationData().getPassword();
-
-                // adds in our firebase database
-                myDatabase = FirebaseDatabase.getInstance();
-                myDatabaseReference = myDatabase.getReference("Users");
-
-                // creates a User object with the username and password
-                storeUser(newUsername, newPassword);
-
-                // continues to menu screen
-                startActivity(intent);
-            }
-            // helper method to add users to database
-            private void storeUser(String username, String password) {
-                String userId = myDatabaseReference.push().getKey();
-                User user = new User(username, password);
-                myDatabaseReference.child(userId).setValue(user);
+                Intent intent = new Intent(AccountCreationScreen.this, LoginScreen.class);
                 username = newUsernameText.getText().toString();
                 password = newPasswordText.getText().toString();
                 if (username == null || password == null
@@ -92,6 +77,7 @@ public class AccountCreationScreen extends AppCompatActivity {
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d(TAG, "createUser:success");
                                         FirebaseUser user = mAuth.getCurrentUser();
+                                        startActivity(intent);
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Log.w(TAG, "createUser:failure", task.getException());
@@ -101,8 +87,11 @@ public class AccountCreationScreen extends AppCompatActivity {
                                 }
                             });
                 }
+
+
                 //add data to firewall, I'll do later.
             }
+
         });
 
         // button to exit back to login screen

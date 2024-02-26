@@ -68,6 +68,7 @@ public class LoginScreen extends AppCompatActivity {
                                         // Sign in success
                                         Log.d(TAG, "signIn:success");
                                         FirebaseUser user = mAuth.getCurrentUser();
+                                        startActivity(intent);
                                     } else {
                                         // If sign in fails
                                         Log.w(TAG, "signIn:failure", task.getException());
