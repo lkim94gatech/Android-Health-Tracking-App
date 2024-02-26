@@ -9,19 +9,21 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <EditText
             android:id="@+id/viewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:ems="10"
             android:inputType="text"
             android:text="Input Meal"
             android:textAlignment="center"
-            android:textSize="24sp"
-            android:layout_gravity="center_horizontal"/>
+            android:textSize="24sp" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -2,6 +2,7 @@ package com.example.a2340project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,6 +37,17 @@ public class HomeScreen extends AppCompatActivity {
             } else {
                 return false;
             }
+        });
+
+        //account creation button
+        Button accountButton = findViewById(R.id.accountCreationButton);
+        accountButton.setOnClickListener(item -> {
+            startActivity(new Intent(HomeScreen.this, AccountCreationScreen.class));
+        });
+        //login button
+        Button loginButton = findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(item -> {
+            startActivity(new Intent(HomeScreen.this, LoginScreen.class));
         });
     }
 }
