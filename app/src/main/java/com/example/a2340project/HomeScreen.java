@@ -7,16 +7,24 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * to code or not to code.  I am bored.
  */
 public class HomeScreen extends AppCompatActivity {
-
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        mAuth = FirebaseAuth.getInstance();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null){
+            startActivity(new Intent(HomeScreen.this, LoginScreen.class));
+        }
 
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
@@ -37,17 +45,6 @@ public class HomeScreen extends AppCompatActivity {
             } else {
                 return false;
             }
-        });
-
-        //account creation button
-        Button accountButton = findViewById(R.id.accountCreationButton);
-        accountButton.setOnClickListener(item -> {
-            startActivity(new Intent(HomeScreen.this, AccountCreationScreen.class));
-        });
-        //login button
-        Button loginButton = findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(item -> {
-            startActivity(new Intent(HomeScreen.this, LoginScreen.class));
         });
     }
 }
