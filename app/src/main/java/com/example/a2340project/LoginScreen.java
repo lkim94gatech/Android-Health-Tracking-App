@@ -91,8 +91,7 @@ public class LoginScreen extends AppCompatActivity {
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                System.exit(0);
+                startActivity(new Intent(LoginScreen.this, HomeScreen.class));
             }
         });
     }
