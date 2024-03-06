@@ -19,4 +19,9 @@
         android:id="@+id/bottom_shopping"
         android:title="Shopping List"
         />
+    <item
+        android:icon="@drawable/profile_24"
+        android:id="@+id/bottom_profile"
+        android:title="Profile"
+        />
 </menu>
