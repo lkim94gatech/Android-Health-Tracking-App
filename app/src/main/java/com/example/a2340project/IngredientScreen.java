@@ -32,6 +32,9 @@ public class IngredientScreen extends AppCompatActivity {
             } else if (buttonID == R.id.bottom_shopping) {
                 startActivity(new Intent(IngredientScreen.this, ShoppingListScreen.class));
                 return true;
+            } else if (buttonID == R.id.bottom_profile) {
+                startActivity(new Intent(IngredientScreen.this, ProfileScreen.class));
+                return true;
             } else {
                 return buttonID == R.id.bottom_ingredients;
             }
