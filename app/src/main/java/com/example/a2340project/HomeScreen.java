@@ -41,6 +41,9 @@ public class HomeScreen extends AppCompatActivity {
             } else if (buttonID == R.id.bottom_ingredients) {
                 startActivity(new Intent(HomeScreen.this, IngredientScreen.class));
                 return true;
+            } else if (buttonID == R.id.bottom_profile) {
+                startActivity(new Intent(HomeScreen.this, ProfileScreen.class));
+                return true;
             } else {
                 return false;
             }

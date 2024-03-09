@@ -34,8 +34,11 @@ public class RecipeScreen extends AppCompatActivity {
             } else if (buttonID == R.id.bottom_ingredients) {
                 startActivity(new Intent(RecipeScreen.this, IngredientScreen.class));
                 return true;
+            } else if (buttonID == R.id.bottom_profile) {
+                startActivity(new Intent(RecipeScreen.this, ProfileScreen.class));
+                return true;
             } else {
-                return false;
+                return buttonID == R.id.bottom_recipes;
             }
         });
     }

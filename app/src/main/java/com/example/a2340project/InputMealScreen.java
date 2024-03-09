@@ -33,8 +33,11 @@ public class InputMealScreen extends AppCompatActivity {
             } else if (buttonID == R.id.bottom_ingredients) {
                 startActivity(new Intent(InputMealScreen.this, IngredientScreen.class));
                 return true;
+            } else if (buttonID == R.id.bottom_profile) {
+                startActivity(new Intent(InputMealScreen.this, ProfileScreen.class));
+                return true;
             } else {
-                return false;
+                return buttonID == R.id.bottom_meals;
             }
         });
     }
