@@ -3,7 +3,11 @@ package com.example.a2340project;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 
+import android.health.connect.datatypes.MealType;
 import android.os.Bundle;
+
+
+import org.checkerframework.checker.units.qual.A;
 
 
 public class MainActivity extends AppCompatActivity {

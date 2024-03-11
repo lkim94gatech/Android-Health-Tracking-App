@@ -5,8 +5,24 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.anychart.AnyChart;
+import com.anychart.AnyChartView;
+import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
+import com.anychart.charts.Pie;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.anychart.AnyChart;
+import com.anychart.AnyChartView;
+import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
+import com.anychart.charts.Pie;
+
+import java.util.ArrayList;
+import java.util.List;
 /**
  * Class for the placeholder page for Inputting meals
  */
@@ -14,7 +30,19 @@ public class InputMealScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_input_meal);
+        AnyChartView anyChartView = findViewById(R.id.any_chart_view);
+
+        Pie pie = AnyChart.pie();
+
+        List<DataEntry> data = new ArrayList<>();
+
+        data.add(new ValueDataEntry("john", 1000));
+        data.add(new ValueDataEntry("Ammy", 1200));
+        data.add(new ValueDataEntry("Sammy", 300));
+
+        pie.data(data);
 
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
