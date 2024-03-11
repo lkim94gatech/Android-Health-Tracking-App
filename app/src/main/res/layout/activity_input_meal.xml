@@ -5,23 +5,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/frameLayout2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <!-- Title -->
+    <TextView
+        android:id="@+id/viewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Input Meal"
+        android:textSize="60sp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"/>
 
-        <TextView
-            android:id="@+id/viewTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Input Meal"
-            android:textSize="60sp" />
-    </FrameLayout>
+    <!-- Account Information -->
+    <TextView
+        android:id="@+id/tvAccountInfoLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Account Information"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintTop_toBottomOf="@+id/viewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tvUserHeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Height: --"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvAccountInfoLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvUserWeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Weight: --"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserHeight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/tvUserGender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Gender: --"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserWeight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"/>
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView2"
