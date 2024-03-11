@@ -75,4 +75,20 @@
         app:layout_constraintTop_toBottomOf="@+id/frameLayout2"
         app:menu="@menu/nav_menu" />
 
+    <Button
+        android:id="@+id/dailyIntakeDailyGoal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daily Intake vs. Daily Goal"
+        tools:layout_editor_absoluteX="33dp"
+        tools:layout_editor_absoluteY="254dp" />
+
+    <Button
+        android:id="@+id/dailyIntakeOverMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daily Intake Over Month"
+        tools:layout_editor_absoluteX="33dp"
+        tools:layout_editor_absoluteY="326dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
