@@ -2,6 +2,8 @@ package com.example.a2340project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,7 +17,22 @@ public class InputMealScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_meal);
+        //generate data structure buttons
+        Button dailyIntakeDailyGoal = findViewById(R.id.dailyIntakeDailyGoal);
+        Button dailyIntakeOverMonth = findViewById(R.id.dailyIntakeOverMonth);
+        dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
+
+        dailyIntakeOverMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setSelectedItemId(R.id.bottom_meals);
