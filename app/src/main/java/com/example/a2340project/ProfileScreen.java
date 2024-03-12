@@ -2,6 +2,10 @@ package com.example.a2340project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +20,20 @@ public class ProfileScreen extends AppCompatActivity {
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setSelectedItemId(R.id.bottom_profile);
+        Button saveButton = findViewById(R.id.saveButton);
+        EditText heightFeet = findViewById(R.id.feetEditTextNumber);
+        EditText heightInches = findViewById(R.id.inchesEditTextNumber);
+        EditText weight = findViewById(R.id.weightEditTextNumber);
+        Spinner genderSpinner = findViewById(R.id.genderSpinner);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                int feet = Integer.parseInt(heightFeet.getText().toString());
+                int inches = Integer.parseInt(heightInches.getText().toString());
+                int pounds = Integer.parseInt(weight.getText().toString());
+                String gender = genderSpinner.getSelectedItem().toString();
+            }
+        });
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int buttonID = item.getItemId();
@@ -36,4 +54,6 @@ public class ProfileScreen extends AppCompatActivity {
             }
         });
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.example.a2340project;
 
 import android.content.Intent;
+import android.health.connect.datatypes.MealType;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -50,17 +51,7 @@ public class InputMealScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.activity_input_meal);
-        AnyChartView anyChartView = findViewById(R.id.any_chart_view);
 
-        Pie pie = AnyChart.pie();
-
-        List<DataEntry> data = new ArrayList<>();
-
-        data.add(new ValueDataEntry("john", 1000));
-        data.add(new ValueDataEntry("Ammy", 1200));
-        data.add(new ValueDataEntry("Sammy", 300));
-
-        pie.data(data);
         //generate data structure buttons
         Button dailyIntakeDailyGoal = findViewById(R.id.dailyIntakeDailyGoal);
         Button dailyIntakeOverMonth = findViewById(R.id.dailyIntakeOverMonth);
