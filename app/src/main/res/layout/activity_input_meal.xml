@@ -62,24 +62,23 @@
         android:layout_marginTop="4dp"/>
 
     <TextView
-        android:id="@+id/inputMealTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Input Meal and Calories"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
-        app:layout_constraintTop_toBottomOf="@+id/tvUserGender"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
-  
-    <Textview
         android:id="@+id/tvDailyCalorieIntake"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Daily Calorie Intake: "
         android:layout_marginStart="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/inputMealTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserGender"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/inputMealTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Input Meal and Calories"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintTop_toBottomOf="@+id/tvDailyCalorieIntake"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
@@ -111,12 +110,13 @@
         android:layout_width="274dp"
         android:layout_height="37dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="4dp"
         android:text="Add Meal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.417"
+        app:layout_constraintHorizontal_bias="0.429"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/inputCalorieEstimate"/>
+        app:layout_constraintTop_toBottomOf="@id/inputCalorieEstimate" />
+
     <TextView
         android:id="@+id/Error"
         android:layout_width="match_parent"
@@ -150,16 +150,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Daily Intake vs. Daily Goal"
-        tools:layout_editor_absoluteX="33dp"
-        tools:layout_editor_absoluteY="254dp" />
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="491dp" />
 
     <Button
         android:id="@+id/dailyIntakeOverMonth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Daily Intake Over Month"
-        tools:layout_editor_absoluteX="33dp"
-        tools:layout_editor_absoluteY="326dp" />
+        tools:layout_editor_absoluteX="105dp"
+        tools:layout_editor_absoluteY="539dp" />
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart1"
@@ -167,6 +167,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/seekBar1"
         tools:layout_editor_absoluteX="-16dp"
-        tools:layout_editor_absoluteY="400dp" />
+        tools:layout_editor_absoluteY="601dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
