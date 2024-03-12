@@ -13,11 +13,19 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Class for the placeholder page for Inputting meals
  */
 public class InputMealScreen extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private DatabaseReference mDatabase;
     private EditText mealInputText;
     private EditText calorieInputText;
     private Button addMealButton;
@@ -28,6 +36,9 @@ public class InputMealScreen extends AppCompatActivity {
         //generate data structure buttons
         Button dailyIntakeDailyGoal = findViewById(R.id.dailyIntakeDailyGoal);
         Button dailyIntakeOverMonth = findViewById(R.id.dailyIntakeOverMonth);
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        currentUser = mAuth.getCurrentUser();
         dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +97,13 @@ public class InputMealScreen extends AppCompatActivity {
                     calories = "";
                     error.setVisibility(View.VISIBLE);
                 } else {
-                    // add to database
+                    // logic for adding a meal and calories given the user is signed in
+                    if (currentUser != null){
+                        String userID = currentUser.getUid();
+                        DatabaseReference userRef = mDatabase.child("users").child(userID);
+                        userRef.child("meal").setValue(meal);
+                        userRef.child("calories").setValue(calories);
+                    }
                 }
             }
         });
