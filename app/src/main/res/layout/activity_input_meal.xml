@@ -10,99 +10,100 @@
         android:id="@+id/viewTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="Input Meal"
         android:textSize="60sp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Account Information -->
     <TextView
         android:id="@+id/tvAccountInfoLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Account Information"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintTop_toBottomOf="@+id/viewTitle"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewTitle" />
 
     <TextView
         android:id="@+id/tvUserHeight"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Height: "
         android:layout_marginStart="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvAccountInfoLabel"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:text="Height: "
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvAccountInfoLabel" />
 
     <TextView
         android:id="@+id/tvUserWeight"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Weight: "
         android:layout_marginStart="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvUserHeight"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="4dp"
+        android:text="Weight: "
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserHeight" />
 
     <TextView
         android:id="@+id/tvUserGender"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Gender: "
         android:layout_marginStart="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvUserWeight"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="4dp"
+        android:text="Gender: "
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserWeight" />
 
     <TextView
         android:id="@+id/tvDailyCalorieIntake"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Daily Calorie Intake: "
         android:layout_marginStart="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvUserGender"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="4dp"
+        android:text="Daily Calorie Intake: "
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUserGender" />
 
     <TextView
         android:id="@+id/inputMealTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Input Meal and Calories"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintTop_toBottomOf="@+id/tvDailyCalorieIntake"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDailyCalorieIntake" />
 
     <EditText
         android:id="@+id/inputMealName"
-        android:hint="meal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintTop_toBottomOf="@id/inputMealTitle"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="4dp"
+        android:hint="meal"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputMealTitle" />
+
     <EditText
         android:id="@+id/inputCalorieEstimate"
-        android:hint="calories"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintTop_toBottomOf="@id/inputMealName"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="4dp"
+        android:hint="calories"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputMealName" />
 
 
     <Button
@@ -121,49 +122,56 @@
         android:id="@+id/Error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Username or Password Contains Illegal Characters"
+        android:layout_marginTop="4dp"
+        android:text="Meal or Calories Contains Illegal Characters"
         android:textColor="#FF0000"
         android:textColorHint="#FF0000"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/addMealButton"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addMealButton" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:itemIconSize="40dp"
         app:itemTextAppearanceActiveBoldEnabled="false"
         app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/nav_menu" />
 
     <Button
         android:id="@+id/dailyIntakeDailyGoal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="101dp"
+        android:layout_marginTop="77dp"
+        android:layout_marginEnd="100dp"
         android:text="Daily Intake vs. Daily Goal"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="491dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addMealButton" />
 
     <Button
         android:id="@+id/dailyIntakeOverMonth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="106dp"
+        android:layout_marginEnd="106dp"
         android:text="Daily Intake Over Month"
-        tools:layout_editor_absoluteX="105dp"
-        tools:layout_editor_absoluteY="539dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dailyIntakeDailyGoal" />
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/seekBar1"
-        tools:layout_editor_absoluteX="-16dp"
-        tools:layout_editor_absoluteY="601dp" />
+    <!--    <com.github.mikephil.charting.charts.BarChart-->
+    <!--        android:id="@+id/chart1"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_above="@+id/seekBar1"-->
+    <!--        tools:layout_editor_absoluteX="-16dp"-->
+    <!--        tools:layout_editor_absoluteY="601dp" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
