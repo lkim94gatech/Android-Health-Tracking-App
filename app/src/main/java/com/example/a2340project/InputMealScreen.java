@@ -142,15 +142,20 @@ public class InputMealScreen extends AppCompatActivity {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int feet = Integer.parseInt(snapshot.child("feet").getValue().toString());
-                int inches = Integer.parseInt(snapshot.child("inches").getValue().toString());
-                int weight = Integer.parseInt(snapshot.child("pounds").getValue().toString());
-                String gender = snapshot.child("gender").getValue().toString();
-                viewModel.updateData(feet, inches, weight, gender);
-                String height = String.format("%d\'%d\"", feet, inches);
-                heightText.setText("Height: " + height);
-                weightText.setText("Weight: " + weight);
-                genderText.setText("Gender: " + gender);
+                if (snapshot.child("feet").getValue() != null
+                        || snapshot.child("inches").getValue() != null
+                        || snapshot.child("pounds").getValue() != null
+                        || snapshot.child("gender").getValue() != null) {
+                    int feet = Integer.parseInt(snapshot.child("feet").getValue().toString());
+                    int inches = Integer.parseInt(snapshot.child("inches").getValue().toString());
+                    int weight = Integer.parseInt(snapshot.child("pounds").getValue().toString());
+                    String gender = snapshot.child("gender").getValue().toString();
+                    viewModel.updateData(feet, inches, weight, gender);
+                    String height = String.format("%d\'%d\"", feet, inches);
+                    heightText.setText("Height: " + height);
+                    weightText.setText("Weight: " + weight);
+                    genderText.setText("Gender: " + gender);
+                }
             }
 
             @Override
