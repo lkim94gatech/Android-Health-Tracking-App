@@ -8,7 +8,9 @@ public class Meal {
     private Date date;
 
     // Default constructor required for calls to DataSnapshot.getValue(Meal.class)
-    public Meal() {}
+    public Meal() {
+
+    }
 
     public Meal(String name, int calories) {
         this.name = name;
@@ -17,7 +19,13 @@ public class Meal {
     }
 
     // Getters
-    public String getName() { return name; }
-    public int getCalories() { return calories; }
-    public Date getDate() { return date; }
+    public String getName() {
+        return name;
+    }
+    public int getCalories() {
+        return calories;
+    }
+    public Date getDate() {
+        return date;
+    }
 }
