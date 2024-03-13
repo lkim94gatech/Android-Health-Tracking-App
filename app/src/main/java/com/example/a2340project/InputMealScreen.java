@@ -13,19 +13,16 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.charts.Pie;
+
+import com.anychart.charts.Cartesian;
+import com.github.mikephil.charting.charts.BarChart;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
@@ -61,8 +58,13 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AnyChartView anyChartView = findViewById(R.id.any_chart_view);
 
+                Cartesian c = AnyChart.cartesian();
 
+                List<DataEntry> list = new ArrayList<>();
+
+                list.add(new ValueDataEntry(currentUser, ));
             }
         });
 
