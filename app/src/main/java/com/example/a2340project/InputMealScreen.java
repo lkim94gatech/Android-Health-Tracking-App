@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
+import android.util.Log;
 
 import android.widget.EditText;
 import android.widget.TextView;
@@ -31,6 +31,7 @@ import com.anychart.chart.common.dataentry.DataEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Calendar;
 /**
  * Class for the placeholder page for Inputting meals
  */
@@ -47,7 +48,9 @@ public class InputMealScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
+        calculateAndDisplayDailyCalorieIntake();
+
         setContentView(R.layout.activity_input_meal);
 
         //generate data structure buttons
@@ -58,6 +61,10 @@ public class InputMealScreen extends AppCompatActivity {
         TextView genderText = findViewById(R.id.tvUserGender);
         addMealButton = findViewById(R.id.addMealButton);
         viewModel = InputMealViewModel.getInstance();
+        mealInputText = findViewById(R.id.inputMealName);
+        calorieInputText = findViewById(R.id.inputCalorieEstimate);
+        TextView error = findViewById(R.id.Error);
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         currentUser = mAuth.getCurrentUser();
@@ -83,7 +90,6 @@ public class InputMealScreen extends AppCompatActivity {
 
         mealInputText = findViewById(R.id.inputMealName);
         calorieInputText = findViewById(R.id.inputCalorieEstimate);
-        TextView error = findViewById(R.id.Error);
 
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
@@ -131,6 +137,7 @@ public class InputMealScreen extends AppCompatActivity {
                         mealInputText.setText("");
                         calorieInputText.setText("");
                     }
+
                 }
             }
         });
@@ -163,4 +170,43 @@ public class InputMealScreen extends AppCompatActivity {
         });
 
     }
+
+    private void calculateAndDisplayDailyCalorieIntake() {
+        if (currentUser != null) {
+            String userID = currentUser.getUid();
+            DatabaseReference userMealsRef = mDatabase.child("users").child(userID).child("meals");
+            Calendar cal = Calendar.getInstance();
+            // Resetting time to start of the day for accurate comparison
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            long startOfDay = cal.getTimeInMillis();
+
+            cal.add(Calendar.DATE, 1);
+            long startOfNextDay = cal.getTimeInMillis();
+
+            userMealsRef.orderByChild("date").startAt(startOfDay).endAt(startOfNextDay)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            int totalCalories = 0;
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Meal meal = snapshot.getValue(Meal.class);
+                                if (meal != null) {
+                                    totalCalories += meal.getCalories();
+                                }
+                            }
+                            TextView dailyCalorieIntakeTextView = findViewById(R.id.tvDailyCalorieIntake);
+                            dailyCalorieIntakeTextView.setText("Daily Calorie Intake: " + totalCalories);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.w("DBError", "loadMeal:onCancelled", databaseError.toException());
+                        }
+                    });
+        }
+    }
+
 }
