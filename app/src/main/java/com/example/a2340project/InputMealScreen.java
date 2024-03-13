@@ -10,17 +10,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * Class for the placeholder page for Inputting meals
- */
 public class InputMealScreen extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -29,6 +30,7 @@ public class InputMealScreen extends AppCompatActivity {
     private EditText mealInputText;
     private EditText calorieInputText;
     private Button addMealButton;
+    private InputMealViewModel viewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +38,7 @@ public class InputMealScreen extends AppCompatActivity {
         //generate data structure buttons
         Button dailyIntakeDailyGoal = findViewById(R.id.dailyIntakeDailyGoal);
         Button dailyIntakeOverMonth = findViewById(R.id.dailyIntakeOverMonth);
+        viewModel = InputMealViewModel.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         currentUser = mAuth.getCurrentUser();
@@ -50,7 +53,7 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeOverMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+
             }
         });
 
@@ -80,7 +83,7 @@ public class InputMealScreen extends AppCompatActivity {
                 startActivity(new Intent(InputMealScreen.this, ProfileScreen.class));
                 return true;
             } else {
-                return buttonID == R.id.bottom_meals;
+                return false;
             }
         });
 
@@ -90,15 +93,14 @@ public class InputMealScreen extends AppCompatActivity {
             public void onClick(View v) {
                 String meal = mealInputText.getText().toString();
                 String calories = calorieInputText.getText().toString();
-                if (meal == null || calories == null
-                        || meal.contains("\\S+") || calories.contains("\\S+")
+                if (meal.contains("\\S+") || calories.contains("\\S+")
                         || meal.equals("") || calories.equals("")) {
                     meal = "";
                     calories = "";
                     error.setVisibility(View.VISIBLE);
                 } else {
                     // logic for adding a meal and calories given the user is signed in
-                    if (currentUser != null){
+                    if (currentUser != null) {
                         String userID = currentUser.getUid();
                         DatabaseReference userRef = mDatabase.child("users").child(userID);
                         userRef.child("meal").setValue(meal);
@@ -107,5 +109,24 @@ public class InputMealScreen extends AppCompatActivity {
                 }
             }
         });
+
+        String userID = currentUser.getUid();
+        DatabaseReference userRef = mDatabase.child("users").child(userID);
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int feet = Integer.parseInt(snapshot.child("feet").getValue().toString());
+                int inches = Integer.parseInt(snapshot.child("inches").getValue().toString());
+                int weight = Integer.parseInt(snapshot.child("pounds").getValue().toString());
+                String gender = snapshot.child("gender").getValue().toString();
+                viewModel.updateData(feet, inches, weight, gender);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 }
