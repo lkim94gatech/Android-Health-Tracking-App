@@ -9,13 +9,24 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;;
 
 public class ProfileScreen extends AppCompatActivity {
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private DatabaseReference mDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        currentUser = mAuth.getCurrentUser();
 
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
@@ -32,6 +43,18 @@ public class ProfileScreen extends AppCompatActivity {
                 int inches = Integer.parseInt(heightInches.getText().toString());
                 int pounds = Integer.parseInt(weight.getText().toString());
                 String gender = genderSpinner.getSelectedItem().toString();
+                saveProfileData(feet, inches, pounds, gender, currentUser);
+            }
+
+            private void saveProfileData(int feet, int inches, int pounds, String gender, FirebaseUser currentUser) {
+                if (currentUser != null) {
+                    String userID = currentUser.getUid();
+                    DatabaseReference userRef = mDatabase.child("users").child(userID);
+                    userRef.child("feet").setValue(feet);
+                    userRef.child("inches").setValue(inches);
+                    userRef.child("pounds").setValue(pounds);
+                    userRef.child("gender").setValue(gender);
+                }
             }
         });
 
@@ -53,7 +76,7 @@ public class ProfileScreen extends AppCompatActivity {
                 return buttonID == R.id.bottom_profile;
             }
         });
-    }
 
+    }
 
 }
