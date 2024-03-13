@@ -3,20 +3,9 @@ package com.example.a2340project;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 
-import android.health.connect.datatypes.MealType;
+
 import android.os.Bundle;
 
-
-import org.checkerframework.checker.units.qual.A;
-
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.charts.Pie;
-
-import java.util.List;
-import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
 

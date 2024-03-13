@@ -10,11 +10,10 @@ import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class ProfileScreen extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -46,7 +45,8 @@ public class ProfileScreen extends AppCompatActivity {
                 saveProfileData(feet, inches, pounds, gender, currentUser);
             }
 
-            private void saveProfileData(int feet, int inches, int pounds, String gender, FirebaseUser currentUser) {
+            private void saveProfileData(int feet, int inches, int pounds,
+                                         String gender, FirebaseUser currentUser) {
                 if (currentUser != null) {
                     String userID = currentUser.getUid();
                     DatabaseReference userRef = mDatabase.child("users").child(userID);

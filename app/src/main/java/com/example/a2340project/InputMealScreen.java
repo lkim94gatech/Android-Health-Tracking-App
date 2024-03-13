@@ -1,7 +1,6 @@
 package com.example.a2340project;
 
 import android.content.Intent;
-import android.health.connect.datatypes.MealType;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,9 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.anychart.charts.Cartesian;
-import com.github.mikephil.charting.charts.BarChart;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,8 +27,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.charts.Pie;
 
 import java.util.ArrayList;
 import java.util.List;

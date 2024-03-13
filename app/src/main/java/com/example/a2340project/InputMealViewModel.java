@@ -3,11 +3,10 @@ package com.example.a2340project;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class InputMealViewModel {
     private static InputMealViewModel instance;
-    final private UserData userData;
+    private final UserData userData;
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
