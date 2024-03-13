@@ -5,6 +5,13 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+//dependencyResolutionManagement {
+//    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+//    repositories {
+//        google()
+//        mavenCentral()
+//    }
+//}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -13,6 +20,5 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-
 rootProject.name = "CS2340A_Team18"
 include ':app'
