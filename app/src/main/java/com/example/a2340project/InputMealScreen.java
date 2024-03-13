@@ -38,6 +38,9 @@ public class InputMealScreen extends AppCompatActivity {
         //generate data structure buttons
         Button dailyIntakeDailyGoal = findViewById(R.id.dailyIntakeDailyGoal);
         Button dailyIntakeOverMonth = findViewById(R.id.dailyIntakeOverMonth);
+        TextView heightText = findViewById(R.id.tvUserHeight);
+        TextView weightText = findViewById(R.id.tvUserWeight);
+        TextView genderText = findViewById(R.id.tvUserGender);
         addMealButton = findViewById(R.id.addMealButton);
         viewModel = InputMealViewModel.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -121,6 +124,10 @@ public class InputMealScreen extends AppCompatActivity {
                 int weight = Integer.parseInt(snapshot.child("pounds").getValue().toString());
                 String gender = snapshot.child("gender").getValue().toString();
                 viewModel.updateData(feet, inches, weight, gender);
+                String height = String.format("%d\'%d\"", feet, inches);
+                heightText.setText("Height: " + height);
+                weightText.setText("Weight: " + weight);
+                genderText.setText("Gender: " + gender);
             }
 
             @Override
