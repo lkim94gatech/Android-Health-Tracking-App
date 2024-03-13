@@ -71,13 +71,7 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AnyChartView anyChartView = findViewById(R.id.any_chart_view);
-
-                Cartesian c = AnyChart.cartesian();
-
-                List<DataEntry> list = new ArrayList<>();
-                String meal = mealInputText.getText().toString();
-                String calories = calorieInputText.getText().toString();
+                
             }
         });
 
