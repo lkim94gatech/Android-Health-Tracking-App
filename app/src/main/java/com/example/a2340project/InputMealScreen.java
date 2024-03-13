@@ -38,6 +38,7 @@ public class InputMealScreen extends AppCompatActivity {
         //generate data structure buttons
         Button dailyIntakeDailyGoal = findViewById(R.id.dailyIntakeDailyGoal);
         Button dailyIntakeOverMonth = findViewById(R.id.dailyIntakeOverMonth);
+        addMealButton = findViewById(R.id.addMealButton);
         viewModel = InputMealViewModel.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
