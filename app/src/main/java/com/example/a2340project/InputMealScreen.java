@@ -51,6 +51,7 @@ public class InputMealScreen extends AppCompatActivity {
 
         calculateAndDisplayDailyCalorieIntake();
 
+
         setContentView(R.layout.activity_input_meal);
 
         //generate data structure buttons
@@ -59,11 +60,13 @@ public class InputMealScreen extends AppCompatActivity {
         TextView heightText = findViewById(R.id.tvUserHeight);
         TextView weightText = findViewById(R.id.tvUserWeight);
         TextView genderText = findViewById(R.id.tvUserGender);
+        TextView dailyGoal = findViewById(R.id.tvDailyGoal);
         addMealButton = findViewById(R.id.addMealButton);
         viewModel = InputMealViewModel.getInstance();
         mealInputText = findViewById(R.id.inputMealName);
         calorieInputText = findViewById(R.id.inputCalorieEstimate);
         TextView error = findViewById(R.id.Error);
+
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -71,13 +74,7 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AnyChartView anyChartView = findViewById(R.id.any_chart_view);
 
-                Cartesian c = AnyChart.cartesian();
-
-                List<DataEntry> list = new ArrayList<>();
-                String meal = mealInputText.getText().toString();
-                String calories = calorieInputText.getText().toString();
             }
         });
 
@@ -156,6 +153,7 @@ public class InputMealScreen extends AppCompatActivity {
                     int weight = Integer.parseInt(snapshot.child("pounds").getValue().toString());
                     String gender = snapshot.child("gender").getValue().toString();
                     viewModel.updateData(feet, inches, weight, gender);
+                    setDailyCalorieGoal(viewModel, dailyGoal);
                     String height = String.format("%d\'%d\"", feet, inches);
                     heightText.setText("Height: " + height);
                     weightText.setText("Weight: " + weight);
@@ -168,9 +166,28 @@ public class InputMealScreen extends AppCompatActivity {
 
             }
         });
-
+        
     }
 
+    private void setDailyCalorieGoal(InputMealViewModel viewModel, TextView dailyGoal) {
+        int feet = viewModel.getUserData().getHeightFeet();
+        int inches = (feet * 12) + viewModel.getUserData().getHeightInches();
+        int height = (int) (inches * 2.54);
+        int weight = viewModel.getUserData().getWeight();
+        String gender = viewModel.getUserData().getGender();
+        int goal;
+        switch (gender) {
+            case "Male":
+                goal = (int) ((13.397 * weight) + (4.799 * height) - 25.178);
+                break;
+            case "Female":
+                goal = (int) ((9.247 * weight) + (3.098 * height) - 360.963);
+                break;
+            default:
+                goal = (int) ((11.322 * weight) + (3.949 * height) - 193.071);
+        }
+        dailyGoal.setText("Daily Calorie Goal: " + goal);
+    }
     private void calculateAndDisplayDailyCalorieIntake() {
         if (currentUser != null) {
             String userID = currentUser.getUid();
