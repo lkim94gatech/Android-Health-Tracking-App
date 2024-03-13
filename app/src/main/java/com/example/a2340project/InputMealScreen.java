@@ -15,8 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.anychart.chart.common.dataentry.BoxDataEntry;
 import com.anychart.charts.Cartesian;
+import com.anychart.core.cartesian.series.Box;
+import com.anychart.core.lineargauge.pointers.Bar;
+import com.anychart.math.CoordinateObject;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BarLineChartBase;
+import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +38,8 @@ import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Pie;
+
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,17 +78,22 @@ public class InputMealScreen extends AppCompatActivity {
             public void onClick(View v) {
                 AnyChartView anyChartView = findViewById(R.id.any_chart_view);
 
-                Cartesian c = AnyChart.cartesian();
 
                 List<DataEntry> list = new ArrayList<>();
                 String meal = mealInputText.getText().toString();
                 String calories = calorieInputText.getText().toString();
+
+                list.add(new ValueDataEntry("honen", Integer.parseInt(calories)));
+                list.add(new ValueDataEntry("" + meal + "", Integer.parseInt(calories)));
             }
         });
 
         dailyIntakeOverMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AnyChartView anyChartView = findViewById(R.id.any_chart_view);
+
+                CoordinateObject c = AnyChart.cartesian();
 
             }
         });
