@@ -1,8 +1,11 @@
 package com.example.a2340project;
 
+<<<<<<< HEAD
 import androidx.appcompat.app.AppCompatActivity;
 
 
+=======
+>>>>>>> cea08a8b6bade374757f4e26115a5009f5dbfec8
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
