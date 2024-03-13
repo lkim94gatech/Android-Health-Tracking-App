@@ -307,4 +307,17 @@ public class InputMealScreen extends AppCompatActivity {
         dailyCalorieGoal = goal;
     }
 
+    // For Test Unit purposes
+    public int calculateTotalCalorieIntake(int currentIntake, int mealCalories) {
+        return currentIntake + mealCalories;
+    }
+    public int calculateDailyCalorieDeficit(int dailyGoal, int dailyIntake) {
+        return dailyGoal - dailyIntake;
+    }
+    public double calculateCalorieIntakePercentage(int dailyIntake, int dailyGoal) {
+        if (dailyGoal == 0) return 0; // Prevent division by zero
+        return (double) dailyIntake / dailyGoal * 100;
+    }
+
+
 }
