@@ -72,8 +72,8 @@ public class InputMealScreen extends AppCompatActivity {
                 Cartesian c = AnyChart.cartesian();
 
                 List<DataEntry> list = new ArrayList<>();
-
-                list.add(new ValueDataEntry(currentUser, ));
+                DatabaseReference userR = mDatabase.child().toString();
+                list.add(new ValueDataEntry());
             }
         });
 

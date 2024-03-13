@@ -13,6 +13,8 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 public class InputMealViewModel extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,5 +30,13 @@ public class InputMealViewModel extends AppCompatActivity {
         list.add(new ValueDataEntry("john", 100));
         list.add(new ValueDataEntry("sin", 32));
 
+
+        public void getInstance() {
+
+        }
+
+        public void updateData(int feet, int inches, int weight, String gender) {
+
+        }
     }
 }
