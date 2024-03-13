@@ -54,6 +54,10 @@ public class ProfileScreen extends AppCompatActivity {
                     userRef.child("inches").setValue(inches);
                     userRef.child("pounds").setValue(pounds);
                     userRef.child("gender").setValue(gender);
+                    heightFeet.setText("");
+                    heightInches.setText("");
+                    weight.setText("");
+                    genderSpinner.setSelection(0);
                 }
             }
         });
