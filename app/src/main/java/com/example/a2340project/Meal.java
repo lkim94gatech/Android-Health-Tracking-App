@@ -15,7 +15,7 @@ public class Meal {
     public Meal(String name, int calories) {
         this.name = name;
         this.calories = calories;
-        this.date = new Date(); // Sets the date to the current date
+        date = new Date(System.currentTimeMillis()); // Sets the date to the current date
     }
 
     // Getters
