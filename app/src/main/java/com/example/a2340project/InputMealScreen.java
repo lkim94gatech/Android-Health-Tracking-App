@@ -213,7 +213,7 @@ public class InputMealScreen extends AppCompatActivity {
         long startOfDay = cal.getTimeInMillis();
         cal.add(Calendar.DATE, 1);
         long startOfNextDay = cal.getTimeInMillis();
-        userMealsRef.orderByChild("date").startAt(startOfDay).endAt(startOfNextDay).addValueEventListener(new ValueEventListener() {
+        userMealsRef.orderByChild("date/time").startAt(startOfDay).endAt(startOfNextDay).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int dailyIntake = 0;
@@ -251,44 +251,5 @@ public class InputMealScreen extends AppCompatActivity {
         dailyGoal.setText("Daily Calorie Goal: " + goal);
         dailyCalorieGoal = goal;
     }
-//    private void calculateAndDisplayDailyCalorieIntake() {
-//        if (currentUser != null) {
-//            String userID = currentUser.getUid();
-//            DatabaseReference userMealsRef = mDatabase.child("users").child(userID).child("meals");
-//            Calendar cal = Calendar.getInstance();
-//            // Resetting time to start of the day for accurate comparison
-//            cal.set(Calendar.HOUR_OF_DAY, 0);
-//            cal.set(Calendar.MINUTE, 0);
-//            cal.set(Calendar.SECOND, 0);
-//            cal.set(Calendar.MILLISECOND, 0);
-//            long startOfDay = cal.getTimeInMillis();
-//
-//            cal.add(Calendar.DATE, 1);
-//            long startOfNextDay = cal.getTimeInMillis();
-//
-//            userMealsRef.orderByChild("date").startAt(startOfDay).endAt(startOfNextDay)
-//                    .addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                            int totalCalories = 0;
-//                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                                Meal meal = snapshot.getValue(Meal.class);
-//                                if (meal != null) {
-//                                    totalCalories += meal.getCalories();
-//                                }
-//                            }
-//                            TextView dailyCalorieIntakeTextView =
-//                                    findViewById(R.id.tvDailyCalorieIntake);
-//                            dailyCalorieIntakeTextView.setText("Daily Calorie Intake: "
-//                                    + totalCalories);
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//                            Log.w("DBError", "loadMeal:onCancelled", databaseError.toException());
-//                        }
-//                    });
-//        }
-//    }
 
 }
