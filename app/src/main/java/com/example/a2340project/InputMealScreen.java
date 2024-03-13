@@ -29,6 +29,7 @@ import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 /**
  * Class for the placeholder page for Inputting meals
@@ -125,8 +126,10 @@ public class InputMealScreen extends AppCompatActivity {
                     if (currentUser != null) {
                         String userID = currentUser.getUid();
                         DatabaseReference userRef = mDatabase.child("users").child(userID);
-                        userRef.child("meal").setValue(meal);
-                        userRef.child("calories").setValue(calories);
+                        int calorie = Integer.parseInt(calories);
+                        userRef.child("meal").push().setValue(new Meal(meal, calorie));
+                        mealInputText.setText("");
+                        calorieInputText.setText("");
                     }
                 }
             }
