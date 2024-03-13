@@ -13,8 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-
-import com.anychart.charts.Cartesian;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,14 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.DataEntry;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Calendar;
 /**
  * Class for the placeholder page for Inputting meals
@@ -177,14 +167,11 @@ public class InputMealScreen extends AppCompatActivity {
         String gender = viewModel.getUserData().getGender();
         int goal;
         switch (gender) {
-            case "Male":
-                goal = (int) ((13.397 * weight) + (4.799 * height) - 25.178);
-                break;
-            case "Female":
-                goal = (int) ((9.247 * weight) + (3.098 * height) - 360.963);
-                break;
-            default:
-                goal = (int) ((11.322 * weight) + (3.949 * height) - 193.071);
+        case "Male": goal = (int) ((13.397 * weight) + (4.799 * height) - 25.178);
+            break;
+        case "Female": goal = (int) ((9.247 * weight) + (3.098 * height) - 360.963);
+            break;
+        default: goal = (int) ((11.322 * weight) + (3.949 * height) - 193.071);
         }
         dailyGoal.setText("Daily Calorie Goal: " + goal);
     }
@@ -214,8 +201,10 @@ public class InputMealScreen extends AppCompatActivity {
                                     totalCalories += meal.getCalories();
                                 }
                             }
-                            TextView dailyCalorieIntakeTextView = findViewById(R.id.tvDailyCalorieIntake);
-                            dailyCalorieIntakeTextView.setText("Daily Calorie Intake: " + totalCalories);
+                            TextView dailyCalorieIntakeTextView =
+                                    findViewById(R.id.tvDailyCalorieIntake);
+                            dailyCalorieIntakeTextView.setText("Daily Calorie Intake: "
+                                    + totalCalories);
                         }
 
                         @Override
