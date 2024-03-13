@@ -190,7 +190,7 @@
 
     </LinearLayout>
 
-    <com.github.mikephil.charting.charts.LineChart
+    <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/graph"
         android:layout_width="200dp"
         android:layout_height="121dp"

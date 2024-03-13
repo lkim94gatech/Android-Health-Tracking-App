@@ -56,6 +56,7 @@ public class InputMealScreen extends AppCompatActivity {
     private InputMealViewModel viewModel;
     private int dailyCalorieGoal;
     private int dailyCalorieIntake;
+    private int totalMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +118,61 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeOverMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BarChart bar = findViewById(R.id.graph);
+                String userID = currentUser.getUid();
+                DatabaseReference userRef = mDatabase.child("users").child(userID);
+                DatabaseReference userMealsRef = userRef.child("meal");
+                Calendar cal = Calendar.getInstance();
+                long endOfMonth = cal.getTimeInMillis();
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+                // Resetting time to start of the day for accurate comparison
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                cal.set(Calendar.DAY_OF_MONTH, 0);
+                long startOfMonth = cal.getTimeInMillis();
+                userMealsRef.orderByChild("date/time").startAt(startOfMonth).endAt(endOfMonth).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        totalMonth = 0;
+                        for (DataSnapshot data: snapshot.getChildren()) {
+                            Meal meal = data.getValue(Meal.class);
+                            if (meal != null) {
+                                totalMonth += meal.getCalories();
+                            }
+                        }
+                        bar.getAxisRight().setDrawLabels(false);
 
+                        ArrayList<BarEntry> entries = new ArrayList<>();
+                        entries.add(new BarEntry(1, (float) (dailyCalorieGoal * day)));
+                        entries.add(new BarEntry(3, (float) totalMonth));
+
+                        YAxis yAxis = bar.getAxisLeft();
+                        yAxis.setAxisMinimum(0f);
+                        yAxis.setAxisMaximum(Math.max((dailyCalorieGoal * day), totalMonth) + 200f);
+                        yAxis.setAxisLineWidth(2f);
+                        yAxis.setAxisLineColor(Color.BLACK);
+                        yAxis.setLabelCount(5);
+
+                        BarDataSet dataSet = new BarDataSet(entries, "Calories");
+                        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+                        BarData barData = new BarData(dataSet);
+                        bar.setData(barData);
+                        bar.getDescription().setEnabled(false);
+                        bar.invalidate();
+                        List<String> list = Arrays.asList("Monthly Calorie Goal", "Monthly Calorie Intake");
+                        bar.getXAxis().setValueFormatter(new IndexAxisValueFormatter(list));
+                        bar.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+                        bar.getXAxis().setGranularity(1f);
+                        bar.getXAxis().setGranularityEnabled(true);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
 
