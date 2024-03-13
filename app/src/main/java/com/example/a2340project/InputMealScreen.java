@@ -29,6 +29,7 @@ import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Calendar;
 /**
@@ -119,14 +120,24 @@ public class InputMealScreen extends AppCompatActivity {
         addMealButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mealName = mealInputText.getText().toString();
-                int calories = Integer.parseInt(calorieInputText.getText().toString());
-                Meal meal = new Meal(mealName, calories);
+                String meal = mealInputText.getText().toString();
+                String calories = calorieInputText.getText().toString();
+                if (meal.contains("\\S+") || calories.contains("\\S+")
+                        || meal.equals("") || calories.equals("")) {
+                    meal = "";
+                    calories = "";
+                    error.setVisibility(View.VISIBLE);
+                } else {
+                    // logic for adding a meal and calories given the user is signed in
+                    if (currentUser != null) {
+                        String userID = currentUser.getUid();
+                        DatabaseReference userRef = mDatabase.child("users").child(userID);
+                        int calorie = Integer.parseInt(calories);
+                        userRef.child("meal").push().setValue(new Meal(meal, calorie));
+                        mealInputText.setText("");
+                        calorieInputText.setText("");
+                    }
 
-                if (currentUser != null) {
-                    String userID = currentUser.getUid();
-                    DatabaseReference userMealsRef = mDatabase.child("users").child(userID).child("meals").push();
-                    userMealsRef.setValue(meal);
                 }
             }
         });
