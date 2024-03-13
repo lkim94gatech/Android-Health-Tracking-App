@@ -27,8 +27,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-<<<<<<< HEAD
-
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
@@ -40,8 +38,7 @@ import java.util.List;
 /**
  * Class for the placeholder page for Inputting meals
  */
-=======
->>>>>>> 842eab04e1a3d85ca0923f3bab8f3d3465b21c43
+
 public class InputMealScreen extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -73,8 +70,8 @@ public class InputMealScreen extends AppCompatActivity {
                 Cartesian c = AnyChart.cartesian();
 
                 List<DataEntry> list = new ArrayList<>();
-                DatabaseReference userR = mDatabase.child().toString();
-                list.add(new ValueDataEntry());
+                String meal = mealInputText.getText().toString();
+                String calories = calorieInputText.getText().toString();
             }
         });
 

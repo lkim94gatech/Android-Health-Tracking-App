@@ -20,17 +20,6 @@ public class InputMealViewModel extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AnyChartView anyChartView = findViewById(R.id.any_chart_view);
-
-        Pie pie = AnyChart.pie();
-
-        List<DataEntry> list = new ArrayList<>();
-
-        list.add(new ValueDataEntry("emmet", 299));
-        list.add(new ValueDataEntry("john", 100));
-        list.add(new ValueDataEntry("sin", 32));
-
-
         public void getInstance() {
 
         }
