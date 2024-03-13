@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.Calendar;
 
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.anychart.math.CoordinateObject;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.PieChart;
+import com.anychart.ch
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,7 +43,9 @@ import com.anychart.charts.Pie;
 
 import org.checkerframework.checker.units.qual.A;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 /**
  * Class for the placeholder page for Inputting meals
@@ -93,8 +97,7 @@ public class InputMealScreen extends AppCompatActivity {
             public void onClick(View v) {
                 AnyChartView anyChartView = findViewById(R.id.any_chart_view);
 
-                CoordinateObject c = AnyChart.cartesian();
-
+                Line l = AnyChart.line();
             }
         });
 
