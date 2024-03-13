@@ -1,6 +1,7 @@
 package com.example.a2340project;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,8 +35,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Class for the placeholder page for Inputting meals
@@ -42,6 +54,8 @@ public class InputMealScreen extends AppCompatActivity {
     private EditText calorieInputText;
     private Button addMealButton;
     private InputMealViewModel viewModel;
+    private int dailyCalorieGoal;
+    private int dailyCalorieIntake;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +86,31 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BarChart bar = findViewById(R.id.chart);
+                bar.getAxisRight().setDrawLabels(false);
 
+                ArrayList<BarEntry> entries = new ArrayList<>();
+                entries.add(new BarEntry(1, (float) dailyCalorieGoal));
+                entries.add(new BarEntry(3, (float) dailyCalorieIntake));
+
+                YAxis yAxis = bar.getAxisLeft();
+                yAxis.setAxisMinimum(0f);
+                yAxis.setAxisMaximum(Math.max(dailyCalorieGoal, dailyCalorieIntake) + 200f);
+                yAxis.setAxisLineWidth(2f);
+                yAxis.setAxisLineColor(Color.BLACK);
+                yAxis.setLabelCount(5);
+
+                BarDataSet dataSet = new BarDataSet(entries, "Calories");
+                dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+                BarData barData = new BarData(dataSet);
+                bar.setData(barData);
+                bar.getDescription().setEnabled(false);
+                bar.invalidate();
+                List<String> list = Arrays.asList("Daily Calorie Goal", "Daily Calorie Intake");
+                bar.getXAxis().setValueFormatter(new IndexAxisValueFormatter(list));
+                bar.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+                bar.getXAxis().setGranularity(1f);
+                bar.getXAxis().setGranularityEnabled(true);
             }
         });
 
@@ -186,6 +224,7 @@ public class InputMealScreen extends AppCompatActivity {
                     }
                 }
                 dailyCalories.setText("Daily Calorie Intake: " + dailyIntake);
+                dailyCalorieIntake = dailyIntake;
             }
 
             @Override
@@ -210,6 +249,7 @@ public class InputMealScreen extends AppCompatActivity {
         default: goal = (int) ((11.322 * weight) + (3.949 * height) - 193.071);
         }
         dailyGoal.setText("Daily Calorie Goal: " + goal);
+        dailyCalorieGoal = goal;
     }
 //    private void calculateAndDisplayDailyCalorieIntake() {
 //        if (currentUser != null) {
