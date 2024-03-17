@@ -8,3 +8,7 @@ Sprint 2:
 Colin - added profile screen, inputs, and nav bar intent switch
 Leandro - added user's profile, daily calorie intake, and set them to default.
         Revised Domain Model, SD, SSD
+
+Sprint 3:
+Leandro - added a button in the ingredient screen that brings up an form of entry and the data
+        is added to the pantry database.
