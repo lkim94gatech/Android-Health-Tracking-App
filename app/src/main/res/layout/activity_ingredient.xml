@@ -21,7 +21,19 @@
             android:gravity="center"
             android:text="Ingredients"
             android:textSize="60sp" />
+
     </FrameLayout>
+
+    <Button
+        android:id="@+id/addIngredientButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Ingredient"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView2"
+        android:layout_marginTop="16dp"/>
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView2"
