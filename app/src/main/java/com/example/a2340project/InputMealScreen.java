@@ -6,11 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-<<<<<<< HEAD
 import java.util.Calendar;
 
-=======
->>>>>>> 8edd78854e0754011bbef7250ebc7edfe44185bc
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,7 +16,6 @@ import androidx.annotation.NonNull;
 //import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-<<<<<<< HEAD
 
 import com.anychart.chart.common.dataentry.BoxDataEntry;
 import com.anychart.charts.Cartesian;
@@ -29,7 +25,6 @@ import com.anychart.math.CoordinateObject;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.PieChart;
-=======
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -38,7 +33,6 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
->>>>>>> 8edd78854e0754011bbef7250ebc7edfe44185bc
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,7 +44,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 
-<<<<<<< HEAD
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
@@ -60,14 +53,12 @@ import org.checkerframework.checker.units.qual.A;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
-=======
 //import java.time.LocalDateTime;
 //import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 //import java.util.Date;
->>>>>>> 8edd78854e0754011bbef7250ebc7edfe44185bc
 import java.util.List;
 
 /**
@@ -110,17 +101,10 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
-                AnyChartView anyChartView = findViewById(R.id.any_chart_view);
 
-
-                List<DataEntry> list = new ArrayList<>();
                 String meal = mealInputText.getText().toString();
                 String calories = calorieInputText.getText().toString();
 
-                list.add(new ValueDataEntry("honen", Integer.parseInt(calories)));
-                list.add(new ValueDataEntry("" + meal + "", Integer.parseInt(calories)));
-=======
                 BarChart bar = findViewById(R.id.chart);
                 bar.getAxisRight().setDrawLabels(false);
                 ArrayList<BarEntry> entries = new ArrayList<>();
@@ -143,16 +127,11 @@ public class InputMealScreen extends AppCompatActivity {
                 bar.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
                 bar.getXAxis().setGranularity(1f);
                 bar.getXAxis().setGranularityEnabled(true);
->>>>>>> 8edd78854e0754011bbef7250ebc7edfe44185bc
             }
         });
         dailyIntakeOverMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
-                AnyChartView anyChartView = findViewById(R.id.any_chart_view);
-
-=======
                 BarChart bar = findViewById(R.id.graph);
                 String userID = currentUser.getUid();
                 DatabaseReference userRef = mDatabase.child("users").child(userID);
@@ -208,7 +187,6 @@ public class InputMealScreen extends AppCompatActivity {
                             public void onCancelled(@NonNull DatabaseError error) {
                             }
                         });
->>>>>>> 8edd78854e0754011bbef7250ebc7edfe44185bc
             }
         });
         mealInputText = findViewById(R.id.inputMealName);
