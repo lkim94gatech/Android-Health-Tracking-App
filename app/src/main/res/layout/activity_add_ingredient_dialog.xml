@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <!-- Ingredient Name -->
+    <EditText
+        android:id="@+id/ingredientNameEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Ingredient Name"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Quantity -->
+    <EditText
+        android:id="@+id/ingredientQuantityEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Quantity"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@+id/ingredientNameEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Calories Per Serving -->
+    <EditText
+        android:id="@+id/caloriesPerServingEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Calories Per Serving/Quantity"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@+id/ingredientQuantityEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Expiration Date (Optional) -->
+    <EditText
+        android:id="@+id/expirationDateEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Expiration Date (optional)"
+        android:inputType="date"
+        app:layout_constraintTop_toBottomOf="@+id/caloriesPerServingEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
