@@ -6,16 +6,26 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Class for the placeholder page for listing recipes
  */
 public class RecipeScreen extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+    private CookBook cookBook;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
+
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("cookbook database");
+        cookBook = new CookBook(mDatabase);
 
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
