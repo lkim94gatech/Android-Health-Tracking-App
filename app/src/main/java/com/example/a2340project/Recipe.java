@@ -6,9 +6,13 @@ import java.util.Map;
 public class Recipe {
 
     private String name;
-    private Map<Ingredient, String> ingredientMap; // Ingredient and Amount
+    private Map<String, Double> ingredientMap; // Ingredient and Amount
 
-    public Recipe(String name, Map<Ingredient, String> ingredientsMap) {
+    public Recipe() {
+
+    }
+
+    public Recipe(String name, Map<String, Double> ingredientsMap) {
         this.name = name;
         this.ingredientMap = ingredientsMap;
     }
@@ -17,7 +21,7 @@ public class Recipe {
         return name;
     }
 
-    public Map<Ingredient, String> getIngredientMap() {
+    public Map<String, Double> getIngredientMap() {
         return ingredientMap;
     }
 }
