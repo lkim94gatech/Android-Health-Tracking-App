@@ -3,11 +3,16 @@ package com.example.a2340project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,19 +23,56 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 /**
  * Class for the placeholder page for listing ingredients
  */
 public class IngredientScreen extends AppCompatActivity {
+    // recycle view stuff
+    RecyclerView recyclerView;
+    DatabaseReference mDatabase;
+    IngredientListAdapter adapter;
+    ArrayList<Ingredient> ingredientArr;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredient);
 
+        // recycle view stuff
+        recyclerView = findViewById(R.id.pantryList);
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(currentUser.getUid()).child("ingredients");
+        recyclerView.setHasFixedSize(false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        ingredientArr = new ArrayList<>();
+        adapter = new IngredientListAdapter(this, ingredientArr);
+        recyclerView.setAdapter(adapter);
+
+
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setSelectedItemId(R.id.bottom_ingredients);
+
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Ingredient ingredient = dataSnapshot.getValue(Ingredient.class);
+                    ingredientArr.add(ingredient);
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int buttonID = item.getItemId();
@@ -103,6 +145,7 @@ public class IngredientScreen extends AppCompatActivity {
                         public void onCancelled(@NonNull DatabaseError databaseError) {
                             // nothing needed at the moment
                         }
+
                     });
                 }
             } catch (NumberFormatException e) {

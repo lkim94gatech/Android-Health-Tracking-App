@@ -13,18 +13,10 @@ import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
-//import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import com.anychart.chart.common.dataentry.BoxDataEntry;
-import com.anychart.charts.Cartesian;
-import com.anychart.core.cartesian.series.Box;
-import com.anychart.core.lineargauge.pointers.Bar;
-import com.anychart.math.CoordinateObject;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.BarLineChartBase;
-import com.github.mikephil.charting.charts.PieChart;
+
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -36,29 +28,16 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-//import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
 
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.DataEntry;
-
-import org.checkerframework.checker.units.qual.A;
-
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
-//import java.time.LocalDateTime;
-//import java.time.LocalTime;
-import java.util.ArrayList;
+
 import java.util.Arrays;
-import java.util.Calendar;
-//import java.util.Date;
+
 import java.util.List;
 
 /**

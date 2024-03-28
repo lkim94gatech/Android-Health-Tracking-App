@@ -6,12 +6,10 @@ import android.content.Intent;
 
 import android.os.Bundle;
 
-<<<<<<< HEAD
 
 import org.checkerframework.checker.units.qual.A;
 
-=======
->>>>>>> c9e52101e861f40602ba3b748b5120c6c1cae20e
+
 public class MainActivity extends AppCompatActivity {
 
 

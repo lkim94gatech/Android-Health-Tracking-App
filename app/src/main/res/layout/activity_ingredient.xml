@@ -6,13 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".IngredientScreen">
 
+
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        tools:layout_editor_absoluteY="500dp">
 
         <TextView
             android:id="@+id/viewTitle"
@@ -23,6 +21,15 @@
             android:textSize="60sp" />
 
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pantryList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewTitle" />
 
     <Button
         android:id="@+id/addIngredientButton"
@@ -46,4 +53,5 @@
         app:itemIconSize="40dp"
         app:itemTextAppearanceActiveBoldEnabled="false"
         app:labelVisibilityMode="labeled"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
