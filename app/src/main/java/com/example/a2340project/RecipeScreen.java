@@ -3,8 +3,10 @@ package com.example.a2340project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -19,7 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +35,8 @@ public class RecipeScreen extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private CookBook cookBook;
 
+    private List<Recipe> recipeList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +46,28 @@ public class RecipeScreen extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("cookbook database");
         cookBook = new CookBook(mDatabase);
         Button recipeButton = findViewById(R.id.addRecipeButton);
+        ListView recipeListView = findViewById(R.id.recipeList);
+        ArrayAdapter<Recipe> arr = new ArrayAdapter<Recipe>(this, android.R.layout.simple_list_item_1, recipeList);
+        recipeListView.setAdapter(arr);
+
+        mDatabase.orderByChild("name").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap: snapshot.getChildren()) {
+                    Recipe recipe = snap.getValue(Recipe.class);
+                    if (!(recipeList.contains(recipe))) {
+                        recipeList.add(recipe);
+                    }
+                }
+                arr.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         recipeButton.setOnClickListener(v -> showAddRecipeDialog());
 
         recipeButton.setOnClickListener(new View.OnClickListener() {

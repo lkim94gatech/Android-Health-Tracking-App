@@ -1,5 +1,7 @@
 package com.example.a2340project;
 
+import androidx.annotation.NonNull;
+
 import java.util.Map;
 
 // Also uses SOLID cause it is a recipe object
@@ -23,5 +25,10 @@ public class Recipe {
 
     public Map<String, Double> getIngredientMap() {
         return ingredientMap;
+    }
+
+    @NonNull
+    public String toString() {
+        return name;
     }
 }
