@@ -10,6 +10,8 @@ public class Recipe {
     private String name;
     private Map<String, Double> ingredientMap; // Ingredient and Amount
 
+    private boolean canMake;
+
     public Recipe() {
 
     }
@@ -29,6 +31,13 @@ public class Recipe {
 
     @NonNull
     public String toString() {
-        return name;
+        return name + (canMake ? " - Have Ingredients" : " - Do Not Have Ingredients");
+    }
+
+    public void setCanMake(boolean canMake) {
+        this.canMake = canMake;
+    }
+    public boolean getCanMake() {
+        return canMake;
     }
 }

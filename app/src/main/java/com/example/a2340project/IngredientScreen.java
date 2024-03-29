@@ -63,7 +63,16 @@ public class IngredientScreen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Ingredient ingredient = dataSnapshot.getValue(Ingredient.class);
-                    ingredientArr.add(ingredient);
+                    String name = ingredient.getName();
+                    boolean contains = false;
+                    for (Ingredient ingred: ingredientArr) {
+                        if (ingred.getName().equals(name)) {
+                            contains = true;
+                        }
+                    }
+                    if (!contains) {
+                        ingredientArr.add(ingredient);
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
