@@ -17,9 +17,10 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
     private Context context;
     private ArrayList<Ingredient> ingredientArr;
 
-    private final recyclerViewInterface recyclerInterface;
+    private final RecyclerViewInterface recyclerInterface;
 
-    public IngredientListAdapter(Context context, ArrayList<Ingredient> ingredientArr, recyclerViewInterface recyclerInterface) {
+    public IngredientListAdapter(Context context, ArrayList<Ingredient> ingredientArr,
+                                 RecyclerViewInterface recyclerInterface) {
         this.context = context;
         this.ingredientArr = ingredientArr;
         this.recyclerInterface = recyclerInterface;
@@ -49,9 +50,10 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
 
         private TextView ingredientName;
         private TextView ingredientQuantity;
-        private static recyclerViewInterface recyclerInterface;
+        private static RecyclerViewInterface recyclerInterface;
 
-        public IngredientViewHolder(@NonNull View itemView, recyclerViewInterface recycleInterface) {
+        public IngredientViewHolder(@NonNull View itemView,
+                                    RecyclerViewInterface recycleInterface) {
             super(itemView);
             this.recyclerInterface = recycleInterface;
 
