@@ -34,4 +34,7 @@ public class Ingredient {
     public String getExpirationDate() {
         return expirationDate;
     }
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
 }

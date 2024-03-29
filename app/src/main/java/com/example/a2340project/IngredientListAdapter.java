@@ -17,9 +17,13 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
     private Context context;
     private ArrayList<Ingredient> ingredientArr;
 
-    public IngredientListAdapter(Context context, ArrayList<Ingredient> ingredientArr) {
+    private final RecyclerViewInterface recyclerInterface;
+
+    public IngredientListAdapter(Context context, ArrayList<Ingredient> ingredientArr,
+                                 RecyclerViewInterface recyclerInterface) {
         this.context = context;
         this.ingredientArr = ingredientArr;
+        this.recyclerInterface = recyclerInterface;
     }
 
     @NonNull
@@ -27,7 +31,7 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
     public IngredientViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.recycler_view_item,
                 parent, false);
-        return new IngredientViewHolder(view);
+        return new IngredientViewHolder(view, recyclerInterface);
     }
 
     @Override
@@ -46,11 +50,26 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
 
         private TextView ingredientName;
         private TextView ingredientQuantity;
-        public IngredientViewHolder(@NonNull View itemView) {
+        private static RecyclerViewInterface recyclerInterface;
+
+        public IngredientViewHolder(@NonNull View itemView,
+                                    RecyclerViewInterface recycleInterface) {
             super(itemView);
+            this.recyclerInterface = recycleInterface;
 
             ingredientName = itemView.findViewById(R.id.ingredientText);
             ingredientQuantity = itemView.findViewById(R.id.quantityText);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (recyclerInterface != null) {
+                        int pos = getAdapterPosition();
+                        if (pos != RecyclerView.NO_POSITION) {
+                            recycleInterface.onItemClick(pos);
+                        }
+                    }
+                }
+            });
         }
     }
 }

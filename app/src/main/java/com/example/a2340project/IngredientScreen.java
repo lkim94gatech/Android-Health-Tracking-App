@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 /**
  * Class for the placeholder page for listing ingredients
  */
-public class IngredientScreen extends AppCompatActivity {
+public class IngredientScreen extends AppCompatActivity implements RecyclerViewInterface {
     // recycle view stuff
     private RecyclerView recyclerView;
     private DatabaseReference mDatabase;
@@ -49,7 +50,7 @@ public class IngredientScreen extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ingredientArr = new ArrayList<>();
-        adapter = new IngredientListAdapter(this, ingredientArr);
+        adapter = new IngredientListAdapter(this, ingredientArr, this);
         recyclerView.setAdapter(adapter);
 
 
@@ -111,6 +112,73 @@ public class IngredientScreen extends AppCompatActivity {
         });
     }
 
+    private void showChangeIngredientDialog(Ingredient ingredient, int pos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change Ingredient Quantity");
+
+        // Inflate the custom layout
+        final View customLayout = getLayoutInflater()
+                .inflate(R.layout.activity_ingredient_change_dialog, null);
+        builder.setView(customLayout);
+
+        // EditText variables initialization
+        TextView name = customLayout.findViewById(R.id.ingredientNameChange);
+        name.setText(ingredient.getName());
+        EditText quantityField = customLayout.findViewById(R.id.ingredientQuantityChange);
+
+        // Add action button
+        builder.setPositiveButton("Save", (dialog, id) -> {
+            double quantity = Double.parseDouble(quantityField.getText().toString());
+            double ingredientQuantity = ingredient.getQuantity();
+            boolean delete = false;
+            if (quantity != ingredientQuantity) {
+                if (quantity <= 0d) {
+                    delete = true;
+                }
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference ingredientsRef = FirebaseDatabase.getInstance().getReference()
+                        .child("users").child(currentUser.getUid()).child("ingredients");
+                Query query = ingredientsRef.orderByChild("name").equalTo(ingredient.getName());
+                boolean finalDelete = delete;
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (finalDelete) {
+                            for (DataSnapshot snap: snapshot.getChildren()) {
+                                Ingredient dataIngredient = snap.getValue(Ingredient.class);
+                                if (dataIngredient.getName().equals(ingredient.getName())) {
+                                    snap.getRef().removeValue();
+                                    ingredientArr.remove(pos);
+                                }
+                            }
+                        } else {
+                            for (DataSnapshot snap: snapshot.getChildren()) {
+                                Ingredient dataIngredient = snap.getValue(Ingredient.class);
+                                if (dataIngredient.getName().equals(ingredient.getName())) {
+                                    snap.getRef().child("quantity").setValue(quantity);
+                                    ingredient.setQuantity(quantity);
+                                    ingredientArr.set(pos, ingredient);
+                                }
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void showAddIngredientDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add New Ingredient");
@@ -170,5 +238,9 @@ public class IngredientScreen extends AppCompatActivity {
     }
 
 
-
+    @Override
+    public void onItemClick(int pos) {
+        Ingredient ingredient = ingredientArr.get(pos);
+        showChangeIngredientDialog(ingredient, pos);
+    }
 }
