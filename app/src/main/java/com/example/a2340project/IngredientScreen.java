@@ -3,9 +3,7 @@ package com.example.a2340project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -21,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -30,10 +29,10 @@ import java.util.ArrayList;
  */
 public class IngredientScreen extends AppCompatActivity {
     // recycle view stuff
-    RecyclerView recyclerView;
-    DatabaseReference mDatabase;
-    IngredientListAdapter adapter;
-    ArrayList<Ingredient> ingredientArr;
+    private RecyclerView recyclerView;
+    private DatabaseReference mDatabase;
+    private IngredientListAdapter adapter;
+    private ArrayList<Ingredient> ingredientArr;
 
 
     @Override
@@ -117,7 +116,8 @@ public class IngredientScreen extends AppCompatActivity {
         builder.setTitle("Add New Ingredient");
 
         // Inflate the custom layout
-        final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_ingredient_dialog, null);
+        final View customLayout = getLayoutInflater()
+                .inflate(R.layout.activity_add_ingredient_dialog, null);
         builder.setView(customLayout);
 
         // EditText variables initialization
@@ -138,13 +138,14 @@ public class IngredientScreen extends AppCompatActivity {
                 if (currentUser != null && quantity > 0) {
                     DatabaseReference ingredientsRef = FirebaseDatabase.getInstance().getReference()
                             .child("users").child(currentUser.getUid()).child("ingredients");
-
-                    ingredientsRef.orderByChild("name").equalTo(ingredientName).addListenerForSingleValueEvent(new ValueEventListener() {
+                    Query query = ingredientsRef.orderByChild("name").equalTo(ingredientName);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (!dataSnapshot.exists()) {
                                 // Ingredient does not exist, add new ingredient
-                                ingredientsRef.push().setValue(new Ingredient(ingredientName, quantity, calories, expirationDate));
+                                ingredientsRef.push().setValue(new Ingredient(ingredientName,
+                                        quantity, calories, expirationDate));
                             }
                             // If ingredient exists, do nothing
                             // maybe later add error pop up?? but not necessary right now

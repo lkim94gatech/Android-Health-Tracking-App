@@ -18,11 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -55,7 +55,8 @@ public class RecipeScreen extends AppCompatActivity {
         Button recipeButton = findViewById(R.id.addRecipeButton);
         Switch sort = (Switch) findViewById(R.id.switch1);
         ListView recipeListView = findViewById(R.id.recipeList);
-        ArrayAdapter<Recipe> arr = new ArrayAdapter<Recipe>(this, android.R.layout.simple_list_item_1, recipeList);
+        ArrayAdapter<Recipe> arr = new ArrayAdapter<Recipe>(this,
+                android.R.layout.simple_list_item_1, recipeList);
         recipeListView.setAdapter(arr);
 
         recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -68,7 +69,8 @@ public class RecipeScreen extends AppCompatActivity {
                     ingredients = ingredients.replaceAll("[}\\s]", "");
                     ingredients = ingredients.replaceAll("=", " - ");
                     String[] ingredientPairs = ingredients.split(",");
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeScreen.this, android.R.layout.simple_list_item_1, ingredientPairs);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeScreen.this,
+                            android.R.layout.simple_list_item_1, ingredientPairs);
                     Dialog dialog = new Dialog(RecipeScreen.this);
                     dialog.setContentView(R.layout.activity_recipe_ingredients_dialog);
                     dialog.setTitle(recipe.getName());
@@ -164,14 +166,6 @@ public class RecipeScreen extends AppCompatActivity {
 
         recipeButton.setOnClickListener(v -> showAddRecipeDialog());
 
-        recipeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddRecipeDialog();
-            }
-        });
-
-
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setSelectedItemId(R.id.bottom_recipes);
@@ -203,7 +197,8 @@ public class RecipeScreen extends AppCompatActivity {
         builder.setTitle("Add New Recipe");
 
         // Inflate the custom layout
-        final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_recipe_dialog, null);
+        final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_recipe_dialog,
+                null);
         builder.setView(customLayout);
 
         // EditText variables initialization
@@ -232,7 +227,8 @@ public class RecipeScreen extends AppCompatActivity {
                     }
                 }
                 // add to database
-                mDatabase.orderByChild("name").equalTo(recipeName).addListenerForSingleValueEvent(new ValueEventListener() {
+                Query query = mDatabase.orderByChild("name").equalTo(recipeName);
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) {

@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAdapter.IngredientViewHolder> {
+public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAdapter
+        .IngredientViewHolder> {
 
-    Context context;
-    ArrayList<Ingredient> ingredientArr;
+    private Context context;
+    private ArrayList<Ingredient> ingredientArr;
 
     public IngredientListAdapter(Context context, ArrayList<Ingredient> ingredientArr) {
         this.context = context;
@@ -24,7 +25,8 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
     @NonNull
     @Override
     public IngredientViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recycler_view_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.recycler_view_item,
+                parent, false);
         return new IngredientViewHolder(view);
     }
 
@@ -42,8 +44,8 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
 
     public static class IngredientViewHolder extends RecyclerView.ViewHolder {
 
-        TextView ingredientName;
-        TextView ingredientQuantity;
+        private TextView ingredientName;
+        private TextView ingredientQuantity;
         public IngredientViewHolder(@NonNull View itemView) {
             super(itemView);
 
