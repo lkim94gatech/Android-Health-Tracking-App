@@ -15,11 +15,11 @@ public class CookBook {
 
     private ArrayList<Recipe> cookBook;
 
-    public CookBook (DatabaseReference ref) {
+    public CookBook(DatabaseReference ref)  {
         this.cookBook = getCookBookDatabase(ref);
     }
 
-    public ArrayList<Recipe> getCookBookDatabase(DatabaseReference ref){
+    public ArrayList<Recipe> getCookBookDatabase(DatabaseReference ref) {
         /*
             Make call to firebase here using the "CookBook Database" reference sent
             from recipe screen(could put this in a view model)
@@ -43,7 +43,7 @@ public class CookBook {
         return recipes;
     }
 
-    public ArrayList<Recipe> getCookBook(){
+    public ArrayList<Recipe> getCookBook() {
         return cookBook;
     }
 }

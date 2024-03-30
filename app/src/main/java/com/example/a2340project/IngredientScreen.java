@@ -3,9 +3,8 @@ package com.example.a2340project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -21,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -28,12 +28,12 @@ import java.util.ArrayList;
 /**
  * Class for the placeholder page for listing ingredients
  */
-public class IngredientScreen extends AppCompatActivity {
+public class IngredientScreen extends AppCompatActivity implements RecyclerViewInterface {
     // recycle view stuff
-    RecyclerView recyclerView;
-    DatabaseReference mDatabase;
-    IngredientListAdapter adapter;
-    ArrayList<Ingredient> ingredientArr;
+    private RecyclerView recyclerView;
+    private DatabaseReference mDatabase;
+    private IngredientListAdapter adapter;
+    private ArrayList<Ingredient> ingredientArr;
 
 
     @Override
@@ -50,7 +50,7 @@ public class IngredientScreen extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ingredientArr = new ArrayList<>();
-        adapter = new IngredientListAdapter(this, ingredientArr);
+        adapter = new IngredientListAdapter(this, ingredientArr, this);
         recyclerView.setAdapter(adapter);
 
 
@@ -63,7 +63,16 @@ public class IngredientScreen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Ingredient ingredient = dataSnapshot.getValue(Ingredient.class);
-                    ingredientArr.add(ingredient);
+                    String name = ingredient.getName();
+                    boolean contains = false;
+                    for (Ingredient ingred: ingredientArr) {
+                        if (ingred.getName().equals(name)) {
+                            contains = true;
+                        }
+                    }
+                    if (!contains) {
+                        ingredientArr.add(ingredient);
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -103,12 +112,80 @@ public class IngredientScreen extends AppCompatActivity {
         });
     }
 
+    private void showChangeIngredientDialog(Ingredient ingredient, int pos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change Ingredient Quantity");
+
+        // Inflate the custom layout
+        final View customLayout = getLayoutInflater()
+                .inflate(R.layout.activity_ingredient_change_dialog, null);
+        builder.setView(customLayout);
+
+        // EditText variables initialization
+        TextView name = customLayout.findViewById(R.id.ingredientNameChange);
+        name.setText(ingredient.getName());
+        EditText quantityField = customLayout.findViewById(R.id.ingredientQuantityChange);
+
+        // Add action button
+        builder.setPositiveButton("Save", (dialog, id) -> {
+            double quantity = Double.parseDouble(quantityField.getText().toString());
+            double ingredientQuantity = ingredient.getQuantity();
+            boolean delete = false;
+            if (quantity != ingredientQuantity) {
+                if (quantity <= 0d) {
+                    delete = true;
+                }
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference ingredientsRef = FirebaseDatabase.getInstance().getReference()
+                        .child("users").child(currentUser.getUid()).child("ingredients");
+                Query query = ingredientsRef.orderByChild("name").equalTo(ingredient.getName());
+                boolean finalDelete = delete;
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (finalDelete) {
+                            for (DataSnapshot snap: snapshot.getChildren()) {
+                                Ingredient dataIngredient = snap.getValue(Ingredient.class);
+                                if (dataIngredient.getName().equals(ingredient.getName())) {
+                                    snap.getRef().removeValue();
+                                    ingredientArr.remove(pos);
+                                }
+                            }
+                        } else {
+                            for (DataSnapshot snap: snapshot.getChildren()) {
+                                Ingredient dataIngredient = snap.getValue(Ingredient.class);
+                                if (dataIngredient.getName().equals(ingredient.getName())) {
+                                    snap.getRef().child("quantity").setValue(quantity);
+                                    ingredient.setQuantity(quantity);
+                                    ingredientArr.set(pos, ingredient);
+                                }
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void showAddIngredientDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add New Ingredient");
 
         // Inflate the custom layout
-        final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_ingredient_dialog, null);
+        final View customLayout = getLayoutInflater()
+                .inflate(R.layout.activity_add_ingredient_dialog, null);
         builder.setView(customLayout);
 
         // EditText variables initialization
@@ -129,13 +206,14 @@ public class IngredientScreen extends AppCompatActivity {
                 if (currentUser != null && quantity > 0) {
                     DatabaseReference ingredientsRef = FirebaseDatabase.getInstance().getReference()
                             .child("users").child(currentUser.getUid()).child("ingredients");
-
-                    ingredientsRef.orderByChild("name").equalTo(ingredientName).addListenerForSingleValueEvent(new ValueEventListener() {
+                    Query query = ingredientsRef.orderByChild("name").equalTo(ingredientName);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (!dataSnapshot.exists()) {
                                 // Ingredient does not exist, add new ingredient
-                                ingredientsRef.push().setValue(new Ingredient(ingredientName, quantity, calories, expirationDate));
+                                ingredientsRef.push().setValue(new Ingredient(ingredientName,
+                                        quantity, calories, expirationDate));
                             }
                             // If ingredient exists, do nothing
                             // maybe later add error pop up?? but not necessary right now
@@ -160,5 +238,9 @@ public class IngredientScreen extends AppCompatActivity {
     }
 
 
-
+    @Override
+    public void onItemClick(int pos) {
+        Ingredient ingredient = ingredientArr.get(pos);
+        showChangeIngredientDialog(ingredient, pos);
+    }
 }

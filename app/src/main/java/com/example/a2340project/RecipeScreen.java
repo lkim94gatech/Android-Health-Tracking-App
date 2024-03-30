@@ -1,10 +1,16 @@
 package com.example.a2340project;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -12,14 +18,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +39,9 @@ public class RecipeScreen extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private CookBook cookBook;
+    private String user;
+
+    private List<Recipe> recipeList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +49,122 @@ public class RecipeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_recipe);
 
         mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser().getUid();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("cookbook database");
         cookBook = new CookBook(mDatabase);
         Button recipeButton = findViewById(R.id.addRecipeButton);
-        recipeButton.setOnClickListener(v -> showAddRecipeDialog());
+        Switch sort = (Switch) findViewById(R.id.switch1);
+        ListView recipeListView = findViewById(R.id.recipeList);
+        ArrayAdapter<Recipe> arr = new ArrayAdapter<Recipe>(this,
+                android.R.layout.simple_list_item_1, recipeList);
+        recipeListView.setAdapter(arr);
 
-        recipeButton.setOnClickListener(new View.OnClickListener() {
+        recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                showAddRecipeDialog();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Recipe recipe = (Recipe) parent.getItemAtPosition(position);
+                if (recipe.getCanMake()) {
+                    String ingredients = recipe.getIngredientMap().toString();
+                    ingredients = ingredients.replaceAll("[{\\s]", "");
+                    ingredients = ingredients.replaceAll("[}\\s]", "");
+                    ingredients = ingredients.replaceAll("=", " - ");
+                    String[] ingredientPairs = ingredients.split(",");
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeScreen.this,
+                            android.R.layout.simple_list_item_1, ingredientPairs);
+                    Dialog dialog = new Dialog(RecipeScreen.this);
+                    dialog.setContentView(R.layout.activity_recipe_ingredients_dialog);
+                    dialog.setTitle(recipe.getName());
+                    ListView list = (ListView) dialog.findViewById(R.id.ingredientList);
+                    list.setAdapter(adapter);
+                    dialog.show();
+                }
             }
         });
 
+        sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    recipeList.sort(new Comparator<Recipe>() {
+                        @Override
+                        public int compare(Recipe o1, Recipe o2) {
+                            int comp;
+                            if (o1.getCanMake() && !o2.getCanMake()) {
+                                comp = -1;
+                            } else if (!o1.getCanMake() && o2.getCanMake()) {
+                                comp = 1;
+                            } else {
+                                comp = 0;
+                            }
+                            return comp;
+                        }
+                    });
+                } else {
+                    recipeList.sort(new Comparator<Recipe>() {
+                        @Override
+                        public int compare(Recipe o1, Recipe o2) {
+                            return (o1.getName().compareTo(o2.getName()));
+                        }
+                    });
+                }
+                arr.notifyDataSetChanged();
+            }
+        });
+
+        mDatabase.orderByChild("name").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap: snapshot.getChildren()) {
+                    Recipe recipe = snap.getValue(Recipe.class);
+                    boolean contains = false;
+                    for (Recipe recipes: recipeList) {
+                        if ((recipes.getName().equals(recipe.getName()))) {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    if (!contains) {
+                        recipeList.add(recipe);
+                    }
+                }
+                arr.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("users").child(user)
+                .child("ingredients").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (Recipe recipe: recipeList) {
+                            Map<String, Double> map = recipe.getIngredientMap();
+                            for (DataSnapshot snap: snapshot.getChildren()) {
+                                Ingredient ingredient = snap.getValue(Ingredient.class);
+                                String ing = ingredient.getName();
+                                if (map.containsKey(ing)) {
+                                    double pantry = ingredient.getQuantity();
+                                    double recipeQuanitity = map.get(ing);
+                                    if (pantry >= recipeQuanitity) {
+                                        recipe.setCanMake(true);
+                                    }
+                                }
+                            }
+                        }
+                        arr.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+        recipeButton.setOnClickListener(v -> showAddRecipeDialog());
 
         //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
@@ -81,7 +197,8 @@ public class RecipeScreen extends AppCompatActivity {
         builder.setTitle("Add New Recipe");
 
         // Inflate the custom layout
-        final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_recipe_dialog, null);
+        final View customLayout = getLayoutInflater().inflate(R.layout.activity_add_recipe_dialog,
+                null);
         builder.setView(customLayout);
 
         // EditText variables initialization
@@ -110,14 +227,15 @@ public class RecipeScreen extends AppCompatActivity {
                     }
                 }
                 // add to database
-                mDatabase.orderByChild("name").equalTo(recipeName).addListenerForSingleValueEvent(new ValueEventListener() {
+                Query query = mDatabase.orderByChild("name").equalTo(recipeName);
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) {
-                            // Ingredient does not exist, add new ingredient
+                            // Recipe does not exist, add new recipe
                             mDatabase.push().setValue(new Recipe(recipeName, lines));
                         }
-                        // If ingredient exists, do nothing
+                        // If Recipe exists, do nothing
                         // maybe later add error pop up?? but not necessary right now
                     }
 
