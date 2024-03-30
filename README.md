@@ -11,4 +11,4 @@ Leandro - added user's profile, daily calorie intake, and set them to default.
 
 Sprint 3:
 Leandro - added a button in the ingredient screen that brings up an form of entry and the data
-        is added to the pantry database.
+        is added to the pantry database. Junit cases.
