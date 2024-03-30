@@ -80,8 +80,6 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
-
                 String meal = mealInputText.getText().toString();
                 String calories = calorieInputText.getText().toString();
 
@@ -107,9 +105,7 @@ public class InputMealScreen extends AppCompatActivity {
                 bar.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
                 bar.getXAxis().setGranularity(1f);
                 bar.getXAxis().setGranularityEnabled(true);
-=======
                 dailyGoalGraph();
->>>>>>> b155b1166236831e062fdc882829589a7b64e13f
             }
         });
         dailyIntakeOverMonth.setOnClickListener(new View.OnClickListener() {
