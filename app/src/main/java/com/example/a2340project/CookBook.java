@@ -8,6 +8,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 // Use this class cause it uses SOLID principles cause it only operates on the cookbook
 
@@ -17,6 +19,16 @@ public class CookBook {
 
     public CookBook(DatabaseReference ref)  {
         this.cookBook = getCookBookDatabase(ref);
+    }
+
+
+    public CookBook() {
+        ArrayList<Recipe> testCookBook= new ArrayList<>();
+        Map<String, Double> testIngredients = new HashMap<>();
+        testIngredients.put("Fake Ingredient", 3.0);
+        testCookBook.add(new Recipe("test", testIngredients));
+        testCookBook.add(new Recipe("constructor", testIngredients));
+        this.cookBook = testCookBook;
     }
 
     public ArrayList<Recipe> getCookBookDatabase(DatabaseReference ref) {
@@ -46,4 +58,13 @@ public class CookBook {
     public ArrayList<Recipe> getCookBook() {
         return cookBook;
     }
+
+    public ArrayList<String> cookBookToRecipeNames() {
+        ArrayList<String> recipeNames = new ArrayList<>();
+        for (Recipe recipe : cookBook) {
+            recipeNames.add(recipe.getName());
+        }
+        return recipeNames;
+    }
+
 }
