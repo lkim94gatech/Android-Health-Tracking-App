@@ -5,6 +5,8 @@ public class UserData {
     private int heightInches;
     private int weight;
     private String gender;
+
+
     public int getHeightFeet() {
         return heightFeet;
     }

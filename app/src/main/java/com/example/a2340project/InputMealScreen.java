@@ -6,13 +6,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.Calendar;
+
 import android.widget.EditText;
 import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
-//import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -25,19 +28,16 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-//import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-//import java.time.LocalDateTime;
-//import java.time.LocalTime;
 import java.util.ArrayList;
+
 import java.util.Arrays;
-import java.util.Calendar;
-//import java.util.Date;
+
 import java.util.List;
 
 /**
@@ -80,6 +80,31 @@ public class InputMealScreen extends AppCompatActivity {
         dailyIntakeDailyGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String meal = mealInputText.getText().toString();
+                String calories = calorieInputText.getText().toString();
+
+                BarChart bar = findViewById(R.id.chart);
+                bar.getAxisRight().setDrawLabels(false);
+                ArrayList<BarEntry> entries = new ArrayList<>();
+                entries.add(new BarEntry(1, (float) dailyCalorieGoal));
+                entries.add(new BarEntry(3, (float) dailyCalorieIntake));
+                YAxis yAxis = bar.getAxisLeft();
+                yAxis.setAxisMinimum(0f);
+                yAxis.setAxisMaximum(Math.max(dailyCalorieGoal, dailyCalorieIntake) + 200f);
+                yAxis.setAxisLineWidth(2f);
+                yAxis.setAxisLineColor(Color.BLACK);
+                yAxis.setLabelCount(5);
+                BarDataSet dataSet = new BarDataSet(entries, "Calories");
+                dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+                BarData barData = new BarData(dataSet);
+                bar.setData(barData);
+                bar.getDescription().setEnabled(false);
+                bar.invalidate();
+                List<String> list = Arrays.asList("Daily Calorie Goal", "Daily Calorie Intake");
+                bar.getXAxis().setValueFormatter(new IndexAxisValueFormatter(list));
+                bar.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+                bar.getXAxis().setGranularity(1f);
+                bar.getXAxis().setGranularityEnabled(true);
                 dailyGoalGraph();
             }
         });

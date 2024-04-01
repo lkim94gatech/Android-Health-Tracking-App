@@ -42,4 +42,14 @@ public class IngredientTest {
         // Assert the quantity was updated
         assertEquals(3.0, ingredient.getQuantity(), 0.0);
     }
+
+    public void deleteIngredient() {
+        //set ingredient quantity to 0;
+        ingredient.setQuantity(0.0);
+        //check to see if it has been removed from the pantry.
+        assertNull(null, ingredient.getName());
+    }
+
+
+
 }
