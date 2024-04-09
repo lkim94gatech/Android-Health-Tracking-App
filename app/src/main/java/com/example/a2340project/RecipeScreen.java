@@ -33,20 +33,31 @@ import java.util.Map;
 
 /**
  * Class for the placeholder page for listing recipes
+ * Observer Implementation- This method will handle updates when the PantryIngredientsModel notifies it of changes
  */
-public class RecipeScreen extends AppCompatActivity {
+public class RecipeScreen extends AppCompatActivity implements Observer {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private CookBook cookBook;
     private String user;
 
+    private ArrayAdapter<Recipe> arr;
     private List<Recipe> recipeList = new ArrayList<>();
+    private PantryIngredientsModel pantryIngredientsModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
+
+        recipeList = new ArrayList<>();
+        arr = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, recipeList);
+
+        // registers the RecipeScreen as an observer
+        PantryIngredientsModel pantryIngredientsModel = new PantryIngredientsModel();
+        pantryIngredientsModel.registerObserver(this);
+
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser().getUid();
@@ -55,6 +66,7 @@ public class RecipeScreen extends AppCompatActivity {
         Button recipeButton = findViewById(R.id.addRecipeButton);
         Switch sort = (Switch) findViewById(R.id.switch1);
         ListView recipeListView = findViewById(R.id.recipeList);
+        recipeListView.setAdapter(arr);
         ArrayAdapter<Recipe> arr = new ArrayAdapter<Recipe>(this,
                 android.R.layout.simple_list_item_1, recipeList);
         recipeListView.setAdapter(arr);
@@ -192,6 +204,20 @@ public class RecipeScreen extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void update() {
+        // Logic to refresh the recipe list based on updated pantry ingredients
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Make sure the update is performed on the UI thread
+                recipeList.clear();
+                // This method 'getUpdatedRecipes()' needs to be defined in your PantryIngredientsModel class
+                recipeList.addAll(pantryIngredientsModel.getUpdatedRecipes());
+                arr.notifyDataSetChanged(); // Notify the adapter to refresh the ListView
+            }
+        });
+    }
     private void showAddRecipeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add New Recipe");
