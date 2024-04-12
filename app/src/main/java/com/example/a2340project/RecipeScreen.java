@@ -33,7 +33,8 @@ import java.util.Map;
 
 /**
  * Class for the placeholder page for listing recipes
- * Observer Implementation- This method will handle updates when the PantryIngredientsModel notifies it of changes
+ * Observer Implementation- This method will handle updates when the
+ * PantryIngredientsModel notifies it of changes
  */
 public class RecipeScreen extends AppCompatActivity implements Observer {
 
@@ -50,15 +51,11 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
-
         recipeList = new ArrayList<>();
         arr = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, recipeList);
-
         // registers the RecipeScreen as an observer
         PantryIngredientsModel pantryIngredientsModel = new PantryIngredientsModel();
         pantryIngredientsModel.registerObserver(this);
-
-
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser().getUid();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("cookbook database");
@@ -70,7 +67,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         ArrayAdapter<Recipe> arr = new ArrayAdapter<Recipe>(this,
                 android.R.layout.simple_list_item_1, recipeList);
         recipeListView.setAdapter(arr);
-
         recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -92,7 +88,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 }
             }
         });
-
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -122,7 +117,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 arr.notifyDataSetChanged();
             }
         });
-
         mDatabase.orderByChild("name").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -141,7 +135,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 }
                 arr.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -212,7 +205,8 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
             public void run() {
                 // Make sure the update is performed on the UI thread
                 recipeList.clear();
-                // This method 'getUpdatedRecipes()' needs to be defined in your PantryIngredientsModel class
+                // This method 'getUpdatedRecipes()' needs to be defined in your
+                // PantryIngredientsModel class
                 recipeList.addAll(pantryIngredientsModel.getUpdatedRecipes());
                 arr.notifyDataSetChanged(); // Notify the adapter to refresh the ListView
             }
