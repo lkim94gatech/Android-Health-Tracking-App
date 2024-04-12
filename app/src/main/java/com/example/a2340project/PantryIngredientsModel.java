@@ -6,7 +6,8 @@ import java.util.Map;
 
 /**
  * Concrete Observable
- * responsible for managing the data related to pantry ingredients and notifying observers of any changes
+ * responsible for managing the data related to pantry ingredients
+ * and notifying observers of any changes
  */
 public class PantryIngredientsModel implements Observable {
 
