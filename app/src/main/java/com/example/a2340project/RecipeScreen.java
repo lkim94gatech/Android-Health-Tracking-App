@@ -88,6 +88,23 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 }
             }
         });
+
+        /**
+         * must integrate factory pattern here
+         * by instantiating diff types of MealPrep objects depending on recipe and pantry
+         * this is done by using MealFactory
+         */
+//        public void onCookButtonClick(Recipe recipe, String mealType) {
+//            MealPrep meal = MealFactory.createMeal(recipe, mealType);
+//            meal.cook();
+//            int calories = meal.calculateCalories();
+//            updateUIWithCalorieInfo(calories);
+//        }
+//
+//        private void updateUIWithCalorieInfo(int calories) {
+//            DinnerMeal.makeText(this, "Calories consumed: " + calories, Toast.LENGTH_LONG).show();
+//        }
+
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
