@@ -137,7 +137,6 @@ public class InputMealScreen extends AppCompatActivity {
                         mealInputText.setText("");
                         calorieInputText.setText("");
                     }
-
                 }
             }
         });

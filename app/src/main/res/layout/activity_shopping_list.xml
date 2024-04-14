@@ -53,10 +53,22 @@
             android:hint="Item Name" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/shoppingListAddButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add to Shopping List" />
+        <TextView
+            android:id="@+id/ShoppingListError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Item name or quantity Contains Illegal Characters"
+            android:textAlignment="center"
+            android:textColor="#FF0000"
+            android:textColorHint="#FF0000"
+            android:visibility="gone"
+            tools:layout_editor_absoluteX="51dp"
+            tools:layout_editor_absoluteY="272dp"
+            tools:visibility="visible" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
