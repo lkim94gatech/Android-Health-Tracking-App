@@ -26,6 +26,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -84,26 +85,23 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                     dialog.setTitle(recipe.getName());
                     ListView list = (ListView) dialog.findViewById(R.id.ingredientList);
                     list.setAdapter(adapter);
+                    Button cookButton = dialog.findViewById(R.id.cookButton);
+                    cookButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (Calendar.HOUR >= 15) {
+                                onCookButtonClick(recipe, "dinner");
+                            } else {
+                                onCookButtonClick(recipe, "breakfast");
+                            }
+                            arr.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
                     dialog.show();
                 }
             }
         });
-
-        /**
-         * must integrate factory pattern here
-         * by instantiating diff types of MealPrep objects depending on recipe and pantry
-         * this is done by using MealFactory
-         */
-//        public void onCookButtonClick(Recipe recipe, String mealType) {
-//            MealPrep meal = MealFactory.createMeal(recipe, mealType);
-//            meal.cook();
-//            int calories = meal.calculateCalories();
-//            updateUIWithCalorieInfo(calories);
-//        }
-//
-//        private void updateUIWithCalorieInfo(int calories) {
-//            DinnerMeal.makeText(this, "Calories consumed: " + calories, Toast.LENGTH_LONG).show();
-//        }
 
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -212,6 +210,12 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 return buttonID == R.id.bottom_recipes;
             }
         });
+    }
+
+    // factory pattern
+    private void onCookButtonClick(Recipe recipe, String mealType) {
+        MealPrep meal = MealFactory.createMeal(recipe, mealType);
+        meal.cook();
     }
 
     @Override
