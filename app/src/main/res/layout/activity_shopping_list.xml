@@ -13,19 +13,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <Button
+            android:id="@+id/buyItems"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="590dp"
+            android:text="Buy Items" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:itemIconSize="40dp"
+        app:itemTextAppearanceActiveBoldEnabled="false"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/nav_menu"
-        app:itemIconSize="40dp"
-        app:itemTextAppearanceActiveBoldEnabled="false"
-        app:labelVisibilityMode="labeled"/>
+        app:menu="@menu/nav_menu" />
 
     <LinearLayout
         android:layout_width="match_parent"
