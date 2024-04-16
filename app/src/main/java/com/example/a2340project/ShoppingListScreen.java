@@ -1,6 +1,5 @@
 package com.example.a2340project;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -104,7 +103,8 @@ public class ShoppingListScreen extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                    ShoppingListItem shoppingListItemSearch = dataSnapshot.getValue(ShoppingListItem.class);
+                                    ShoppingListItem shoppingListItemSearch = dataSnapshot
+                                            .getValue(ShoppingListItem.class);
                                     String searchName = shoppingListItemSearch.getName();
                                     if (finalItemName.equals(searchName)) {
                                         shoppingListItemSearch.setQuantity(quantityAmount);
@@ -120,7 +120,8 @@ public class ShoppingListScreen extends AppCompatActivity {
                             }
                         });
                         if (!foundItem[0]) {
-                            userRef.child("Shopping List").push().setValue(new ShoppingListItem(itemName, quantityAmount));
+                            userRef.child("Shopping List").push()
+                                    .setValue(new ShoppingListItem(itemName, quantityAmount));
                         }
                         shoppingListItem.setText("");
                         shoppingListQuantity.setText("");
@@ -131,7 +132,8 @@ public class ShoppingListScreen extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                    ShoppingListItem shoppingListItemCheck = dataSnapshot.getValue(ShoppingListItem.class);
+                                    ShoppingListItem shoppingListItemCheck = dataSnapshot
+                                            .getValue(ShoppingListItem.class);
                                     if (shoppingListItemCheck.getQuantity() <= 0) {
                                         dataSnapshot.getRef().removeValue();
                                     }
