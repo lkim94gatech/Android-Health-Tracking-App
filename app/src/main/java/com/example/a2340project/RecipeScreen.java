@@ -26,6 +26,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -33,44 +34,42 @@ import java.util.Map;
 
 /**
  * Class for the placeholder page for listing recipes
- * Observer Implementation- This method will handle updates when the PantryIngredientsModel notifies it of changes
+ * Observer Implementation- This method will handle updates when the
+ * PantryIngredientsModel notifies it of changes
  */
 public class RecipeScreen extends AppCompatActivity implements Observer {
-
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private CookBook cookBook;
     private String user;
-
     private ArrayAdapter<Recipe> arr;
     private List<Recipe> recipeList = new ArrayList<>();
     private PantryIngredientsModel pantryIngredientsModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
-
         recipeList = new ArrayList<>();
         arr = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, recipeList);
-
         // registers the RecipeScreen as an observer
         PantryIngredientsModel pantryIngredientsModel = new PantryIngredientsModel();
         pantryIngredientsModel.registerObserver(this);
-
-
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser().getUid();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("cookbook database");
         cookBook = new CookBook(mDatabase);
         Button recipeButton = findViewById(R.id.addRecipeButton);
+        updateRecipeList();
+        checkForCookable();
         Switch sort = (Switch) findViewById(R.id.switch1);
         ListView recipeListView = findViewById(R.id.recipeList);
+        arr.notifyDataSetChanged();
         recipeListView.setAdapter(arr);
         ArrayAdapter<Recipe> arr = new ArrayAdapter<Recipe>(this,
                 android.R.layout.simple_list_item_1, recipeList);
         recipeListView.setAdapter(arr);
-
+        checkForCookable();
+        updateRecipeList();
         recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -88,41 +87,34 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                     dialog.setTitle(recipe.getName());
                     ListView list = (ListView) dialog.findViewById(R.id.ingredientList);
                     list.setAdapter(adapter);
+                    Button cookButton = dialog.findViewById(R.id.cookButton);
+                    cookButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (Calendar.HOUR >= 15) {
+                                onCookButtonClick(recipe, "dinner");
+                            } else {
+                                onCookButtonClick(recipe, "breakfast");
+                            }
+                            arr.notifyDataSetChanged();
+                            dialog.dismiss();
+                            updateRecipeList();
+                            checkForCookable();
+                            arr.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
                     dialog.show();
                 }
             }
         });
-
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    recipeList.sort(new Comparator<Recipe>() {
-                        @Override
-                        public int compare(Recipe o1, Recipe o2) {
-                            int comp;
-                            if (o1.getCanMake() && !o2.getCanMake()) {
-                                comp = -1;
-                            } else if (!o1.getCanMake() && o2.getCanMake()) {
-                                comp = 1;
-                            } else {
-                                comp = 0;
-                            }
-                            return comp;
-                        }
-                    });
-                } else {
-                    recipeList.sort(new Comparator<Recipe>() {
-                        @Override
-                        public int compare(Recipe o1, Recipe o2) {
-                            return (o1.getName().compareTo(o2.getName()));
-                        }
-                    });
-                }
+                sortRecipeList(isChecked);
                 arr.notifyDataSetChanged();
             }
         });
-
         mDatabase.orderByChild("name").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -141,7 +133,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 }
                 arr.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -153,18 +144,27 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 .child("ingredients").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (Recipe recipe: recipeList) {
-                            Map<String, Double> map = recipe.getIngredientMap();
-                            for (DataSnapshot snap: snapshot.getChildren()) {
+                        for (Recipe recipe: recipeList) { //for each recipe
+                            Map<String, Double> map = recipe.getIngredientMap(); //gets recipe ingredients
+                            boolean hasIngredients = true;
+                            for (DataSnapshot snap: snapshot.getChildren()) { //pantry
                                 Ingredient ingredient = snap.getValue(Ingredient.class);
-                                String ing = ingredient.getName();
-                                if (map.containsKey(ing)) {
+                                String ing = ingredient.getName(); //ingredient name
+                                if (map.containsKey(ing)) { //if ingredient is in map
                                     double pantry = ingredient.getQuantity();
                                     double recipeQuanitity = map.get(ing);
-                                    if (pantry >= recipeQuanitity) {
-                                        recipe.setCanMake(true);
+                                    if (!(pantry >= recipeQuanitity)) { //if there isn't enough of it
+                                        hasIngredients = false;
+                                    } else { // there is enough of it
+                                        map.remove(ing);
                                     }
                                 }
+                            }
+                            if (!map.isEmpty()) {
+                                recipe.setCanMake(false);
+                            } else {
+                                // If all ingredients are found in the pantry and in sufficient quantity, mark the recipe as makeable
+                                recipe.setCanMake(true);
                             }
                         }
                         arr.notifyDataSetChanged();
@@ -204,6 +204,42 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         });
     }
 
+    private void sortRecipeList(boolean isChecked) {
+        if (isChecked) {
+            recipeList.sort(new Comparator<Recipe>() {
+                @Override
+                public int compare(Recipe o1, Recipe o2) {
+                    int comp;
+                    if (o1.getCanMake() && !o2.getCanMake()) {
+                        comp = -1;
+                    } else if (!o1.getCanMake() && o2.getCanMake()) {
+                        comp = 1;
+                    } else {
+                        comp = 0;
+                    }
+                    return comp;
+                }
+            });
+        } else {
+            recipeList.sort(new Comparator<Recipe>() {
+                @Override
+                public int compare(Recipe o1, Recipe o2) {
+                    return (o1.getName().compareTo(o2.getName()));
+                }
+            });
+        }
+    }
+
+    // factory pattern
+    private void onCookButtonClick(Recipe recipe, String mealType) {
+        MealPrep meal = MealFactory.createMeal(recipe, mealType);
+        meal.cook();
+        checkForCookable();
+        updateRecipeList();
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
     @Override
     public void update() {
         // Logic to refresh the recipe list based on updated pantry ingredients
@@ -212,7 +248,8 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
             public void run() {
                 // Make sure the update is performed on the UI thread
                 recipeList.clear();
-                // This method 'getUpdatedRecipes()' needs to be defined in your PantryIngredientsModel class
+                // This method 'getUpdatedRecipes()' needs to be defined in your
+                // PantryIngredientsModel class
                 recipeList.addAll(pantryIngredientsModel.getUpdatedRecipes());
                 arr.notifyDataSetChanged(); // Notify the adapter to refresh the ListView
             }
@@ -273,10 +310,76 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 });
             }
         });
-
         builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
-
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+    public void updateRecipeList(){
+        FirebaseDatabase.getInstance().getReference()
+                .child("users").child(user)
+                .child("ingredients").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (Recipe recipe: recipeList) {
+                            Map<String, Double> map = recipe.getIngredientMap();
+                            for (DataSnapshot snap: snapshot.getChildren()) {
+                                Ingredient ingredient = snap.getValue(Ingredient.class);
+                                String ing = ingredient.getName();
+                                if (map.containsKey(ing)) {
+                                    double pantry = ingredient.getQuantity();
+                                    double recipeQuanitity = map.get(ing);
+                                    if (pantry >= recipeQuanitity) {
+                                        recipe.setCanMake(true);
+                                    }
+                                }
+                            }
+                        }
+                        arr.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+    private void checkForCookable(){
+        FirebaseDatabase.getInstance().getReference()
+                .child("users").child(user)
+                .child("ingredients").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (Recipe recipe: recipeList) { //for each recipe
+                            Map<String, Double> map = recipe.getIngredientMap(); //gets recipe ingredients
+                            boolean hasIngredients = true;
+                            for (DataSnapshot snap: snapshot.getChildren()) { //pantry
+                                Ingredient ingredient = snap.getValue(Ingredient.class);
+                                String ing = ingredient.getName(); //ingredient name
+                                if (map.containsKey(ing)) { //if ingredient is in map
+                                    double pantry = ingredient.getQuantity();
+                                    double recipeQuanitity = map.get(ing);
+                                    if (!(pantry >= recipeQuanitity)) { //if there isn't enough of it
+                                        hasIngredients = false;
+                                    } else { // there is enough of it
+                                        map.remove(ing);
+                                    }
+                                }
+                            }
+                            if (!map.isEmpty()) {
+                                recipe.setCanMake(false);
+                            } else {
+                                // If all ingredients are found in the pantry and in sufficient quantity, mark the recipe as makeable
+                                recipe.setCanMake(true);
+                            }
+                        }
+                        arr.notifyDataSetChanged();
+                        updateRecipeList();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 }

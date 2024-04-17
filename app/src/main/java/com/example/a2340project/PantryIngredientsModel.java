@@ -1,12 +1,16 @@
 package com.example.a2340project;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Concrete Observable
- * responsible for managing the data related to pantry ingredients and notifying observers of any changes
+ * responsible for managing the data related to pantry ingredients
+ * and notifying observers of any changes
  */
 public class PantryIngredientsModel implements Observable {
 
@@ -16,7 +20,7 @@ public class PantryIngredientsModel implements Observable {
     private Map<String, Ingredient> ingredients;
 
     public PantryIngredientsModel() {
-        // Initialize ingredients and set up Firebase listeners
+
     }
 
     // Observable methods
