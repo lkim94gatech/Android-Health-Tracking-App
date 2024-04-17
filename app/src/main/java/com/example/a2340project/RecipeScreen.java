@@ -38,16 +38,13 @@ import java.util.Map;
  * PantryIngredientsModel notifies it of changes
  */
 public class RecipeScreen extends AppCompatActivity implements Observer {
-
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private CookBook cookBook;
     private String user;
-
     private ArrayAdapter<Recipe> arr;
     private List<Recipe> recipeList = new ArrayList<>();
     private PantryIngredientsModel pantryIngredientsModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,33 +108,10 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 }
             }
         });
-
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    recipeList.sort(new Comparator<Recipe>() {
-                        @Override
-                        public int compare(Recipe o1, Recipe o2) {
-                            int comp;
-                            if (o1.getCanMake() && !o2.getCanMake()) {
-                                comp = -1;
-                            } else if (!o1.getCanMake() && o2.getCanMake()) {
-                                comp = 1;
-                            } else {
-                                comp = 0;
-                            }
-                            return comp;
-                        }
-                    });
-                } else {
-                    recipeList.sort(new Comparator<Recipe>() {
-                        @Override
-                        public int compare(Recipe o1, Recipe o2) {
-                            return (o1.getName().compareTo(o2.getName()));
-                        }
-                    });
-                }
+                sortRecipeList(isChecked);
                 arr.notifyDataSetChanged();
             }
         });
@@ -230,6 +204,32 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         });
     }
 
+    private void sortRecipeList(boolean isChecked) {
+        if (isChecked) {
+            recipeList.sort(new Comparator<Recipe>() {
+                @Override
+                public int compare(Recipe o1, Recipe o2) {
+                    int comp;
+                    if (o1.getCanMake() && !o2.getCanMake()) {
+                        comp = -1;
+                    } else if (!o1.getCanMake() && o2.getCanMake()) {
+                        comp = 1;
+                    } else {
+                        comp = 0;
+                    }
+                    return comp;
+                }
+            });
+        } else {
+            recipeList.sort(new Comparator<Recipe>() {
+                @Override
+                public int compare(Recipe o1, Recipe o2) {
+                    return (o1.getName().compareTo(o2.getName()));
+                }
+            });
+        }
+    }
+
     // factory pattern
     private void onCookButtonClick(Recipe recipe, String mealType) {
         MealPrep meal = MealFactory.createMeal(recipe, mealType);
@@ -240,7 +240,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         finish();
         startActivity(intent);
     }
-
     @Override
     public void update() {
         // Logic to refresh the recipe list based on updated pantry ingredients
@@ -311,10 +310,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 });
             }
         });
-
-
         builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
-
         AlertDialog dialog = builder.create();
         dialog.show();
     }
