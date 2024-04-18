@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,6 +43,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
     private DatabaseReference mDatabase;
     private CookBook cookBook;
     private String user;
+    private FirebaseUser currentUser;
     private ArrayAdapter<Recipe> arr;
     private List<Recipe> recipeList = new ArrayList<>();
     private PantryIngredientsModel pantryIngredientsModel;
@@ -87,6 +89,10 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                     ListView list = (ListView) dialog.findViewById(R.id.ingredientList);
                     list.setAdapter(adapter);
                     Button cookButton = dialog.findViewById(R.id.cookButton);
+
+                    // button for buying remaining ingredients
+                    Button buyButton = dialog.findViewById(R.id.buyIngredientsButton);
+
                     cookButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -103,6 +109,58 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                             dialog.dismiss();
                         }
                     });
+
+                    // action for buy button
+                    buyButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String userID = currentUser.getUid();
+                            DatabaseReference userRef = mDatabase.child("users").child(userID);
+                            for (String pair : ingredientPairs) {
+                                String[] parts = pair.split(" - ");
+                                String itemName = parts[0];
+                                int quantity = Integer.parseInt(parts[1]);
+                                if (currentUser != null) {
+
+                                    String finalItemName = itemName;
+                                    final boolean[] found = {false};
+                                    mDatabase.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                Ingredient ingredient = dataSnapshot
+                                                        .getValue(Ingredient.class);
+                                                String searchName = ingredient.getName();
+                                                if (finalItemName.equals(searchName) && ingredient.getQuantity() < quantity) {
+                                                    for (DataSnapshot dataSnapshot2 : snapshot.getChildren()) {
+                                                        ShoppingListItem shoppingListItemSearch = dataSnapshot
+                                                                .getValue(ShoppingListItem.class);
+                                                        if (finalItemName.equals(shoppingListItemSearch.getName())) {
+                                                            dataSnapshot2.getRef().removeValue();
+                                                            userRef.child("Shopping List").push()
+                                                                    .setValue(new ShoppingListItem(itemName, (int) ingredient.getQuantity() - quantity));
+                                                            found[0] = true;
+                                                        }
+                                                    }
+                                                } else if (finalItemName.equals(searchName)) {
+                                                    found[0] = true;
+                                                }
+                                            }
+                                        }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            return;
+                                        }
+                                    });
+                                    if (!found[0]) {
+                                        userRef.child("Shopping List").push()
+                                                .setValue(new ShoppingListItem(itemName, quantity));
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    // I messed up these brackets but I think we're good
                     dialog.show();
                 }
             }
