@@ -51,7 +51,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_recipe);
         recipeList = new ArrayList<>();
         arr = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, recipeList);
-        // registers the RecipeScreen as an observer
         PantryIngredientsModel pantryIngredientsModel = new PantryIngredientsModel();
         pantryIngredientsModel.registerObserver(this);
         mAuth = FirebaseAuth.getInstance();
@@ -135,25 +134,23 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
-
         FirebaseDatabase.getInstance().getReference()
                 .child("users").child(user)
                 .child("ingredients").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (Recipe recipe: recipeList) { //for each recipe
-                            Map<String, Double> map = recipe.getIngredientMap(); //gets recipe ingredients
+                            Map<String, Double> map = recipe.getIngredientMap();
                             boolean hasIngredients = true;
-                            for (DataSnapshot snap: snapshot.getChildren()) { //pantry
+                            for (DataSnapshot snap: snapshot.getChildren()) {
                                 Ingredient ingredient = snap.getValue(Ingredient.class);
                                 String ing = ingredient.getName(); //ingredient name
                                 if (map.containsKey(ing)) { //if ingredient is in map
                                     double pantry = ingredient.getQuantity();
                                     double recipeQuanitity = map.get(ing);
-                                    if (!(pantry >= recipeQuanitity)) { //if there isn't enough of it
+                                    if (!(pantry >= recipeQuanitity)) {
                                         hasIngredients = false;
                                     } else { // there is enough of it
                                         map.remove(ing);
@@ -163,19 +160,15 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                             if (!map.isEmpty()) {
                                 recipe.setCanMake(false);
                             } else {
-                                // If all ingredients are found in the pantry and in sufficient quantity, mark the recipe as makeable
                                 recipe.setCanMake(true);
                             }
                         }
                         arr.notifyDataSetChanged();
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
-
         recipeButton.setOnClickListener(v -> showAddRecipeDialog());
 
         //nav buttons
@@ -314,7 +307,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-    public void updateRecipeList(){
+    public void updateRecipeList() {
         FirebaseDatabase.getInstance().getReference()
                 .child("users").child(user)
                 .child("ingredients").addValueEventListener(new ValueEventListener() {
@@ -343,14 +336,14 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                     }
                 });
     }
-    private void checkForCookable(){
+    private void checkForCookable() {
         FirebaseDatabase.getInstance().getReference()
                 .child("users").child(user)
                 .child("ingredients").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (Recipe recipe: recipeList) { //for each recipe
-                            Map<String, Double> map = recipe.getIngredientMap(); //gets recipe ingredients
+                            Map<String, Double> map = recipe.getIngredientMap();
                             boolean hasIngredients = true;
                             for (DataSnapshot snap: snapshot.getChildren()) { //pantry
                                 Ingredient ingredient = snap.getValue(Ingredient.class);
@@ -358,7 +351,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                                 if (map.containsKey(ing)) { //if ingredient is in map
                                     double pantry = ingredient.getQuantity();
                                     double recipeQuanitity = map.get(ing);
-                                    if (!(pantry >= recipeQuanitity)) { //if there isn't enough of it
+                                    if (!(pantry >= recipeQuanitity)) {
                                         hasIngredients = false;
                                     } else { // there is enough of it
                                         map.remove(ing);
@@ -368,14 +361,12 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                             if (!map.isEmpty()) {
                                 recipe.setCanMake(false);
                             } else {
-                                // If all ingredients are found in the pantry and in sufficient quantity, mark the recipe as makeable
                                 recipe.setCanMake(true);
                             }
                         }
                         arr.notifyDataSetChanged();
                         updateRecipeList();
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
