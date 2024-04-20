@@ -41,6 +41,31 @@ public class IngredientScreen extends AppCompatActivity implements RecyclerViewI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ingredient);
 
+        //nav buttons
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
+        bottomNavigationView.setSelectedItemId(R.id.bottom_ingredients);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int buttonID = item.getItemId();
+            if (buttonID == R.id.bottom_meals) {
+                startActivity(new Intent(IngredientScreen.this, InputMealScreen.class));
+                return true;
+            } else if (buttonID == R.id.bottom_recipes) {
+                startActivity(new Intent(IngredientScreen.this, RecipeScreen.class));
+                return true;
+            } else if (buttonID == R.id.bottom_shopping) {
+                startActivity(new Intent(IngredientScreen.this, ShoppingListScreen.class));
+                return true;
+            } else if (buttonID == R.id.bottom_ingredients) {
+                startActivity(new Intent(IngredientScreen.this, IngredientScreen.class));
+                return true;
+            } else if (buttonID == R.id.bottom_profile) {
+                startActivity(new Intent(IngredientScreen.this, ProfileScreen.class));
+                return true;
+            } else {
+                return buttonID == R.id.bottom_ingredients;
+            }
+        });
+
         // recycle view stuff
         recyclerView = findViewById(R.id.pantryList);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -54,9 +79,6 @@ public class IngredientScreen extends AppCompatActivity implements RecyclerViewI
         recyclerView.setAdapter(adapter);
 
 
-        //nav buttons
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
-        bottomNavigationView.setSelectedItemId(R.id.bottom_ingredients);
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -80,25 +102,6 @@ public class IngredientScreen extends AppCompatActivity implements RecyclerViewI
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int buttonID = item.getItemId();
-            if (buttonID == R.id.bottom_meals) {
-                startActivity(new Intent(IngredientScreen.this, InputMealScreen.class));
-                return true;
-            } else if (buttonID == R.id.bottom_recipes) {
-                startActivity(new Intent(IngredientScreen.this, RecipeScreen.class));
-                return true;
-            } else if (buttonID == R.id.bottom_shopping) {
-                startActivity(new Intent(IngredientScreen.this, ShoppingListScreen.class));
-                return true;
-            } else if (buttonID == R.id.bottom_profile) {
-                startActivity(new Intent(IngredientScreen.this, ProfileScreen.class));
-                return true;
-            } else {
-                return buttonID == R.id.bottom_ingredients;
             }
         });
 
