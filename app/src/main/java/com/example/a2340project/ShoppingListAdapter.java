@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         ShoppingListItem listItem = listItemArray.get(position);
         holder.itemName.setText(listItem.getName());
         holder.itemQuantity.setText(String.valueOf(listItem.getQuantity()));
+        holder.itemCheckBox.setChecked(listItem.getChecked());
+
+        //sets check status for item when checkbox is clicked
+        holder.itemCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            listItem.setChecked(holder.itemCheckBox.isChecked());
+            System.out.println("checked!h");
+        });
     }
 
     @Override
@@ -50,6 +58,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         private TextView itemName;
         private TextView itemQuantity;
+        private CheckBox itemCheckBox;
         private static RecyclerViewInterface recyclerInterface;
 
         public ShoppingListViewHolder(@NonNull View itemView,
@@ -59,6 +68,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
             itemName = itemView.findViewById(R.id.itemName);
             itemQuantity = itemView.findViewById(R.id.itemQuantity);
+            itemCheckBox = itemView.findViewById(R.id.itemCheckBox);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
