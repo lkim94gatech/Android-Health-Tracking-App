@@ -98,6 +98,7 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         mDatabase = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(currentUser.getUid()).child("shopping_list");
 
+
         /* mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -192,6 +193,11 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
             @Override
             public void onClick(View v) {
                 //
+                for (ShoppingListItem listItem: shoppingListItems) {
+                    if (listItem.getChecked()) {
+                        //remove from list and add to pantry.
+                    }
+                }
 
             }
         });
