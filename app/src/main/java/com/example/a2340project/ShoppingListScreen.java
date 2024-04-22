@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -82,14 +83,16 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                shoppingListItems.clear(); // Clear existing data
                 for (DataSnapshot data : snapshot.getChildren()) {
                     String itemName = data.child("name").getValue().toString();
                     int itemQuantity = Integer.parseInt(data.child("quantity")
                             .getValue().toString());
-                    shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity));
+                    int itemCalories = 0;
+
+                    shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity, itemCalories));
+
                 }
-                adapter.notifyDataSetChanged(); // Notify adapter of data change
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -100,29 +103,6 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         });
         adapter = new ShoppingListAdapter(this, shoppingListItems, this);
         recyclerView.setAdapter(adapter);
-
-        /* mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
-                    ShoppingListItem listItem = dataSnapshot.getValue(ShoppingListItem.class);
-                    String itemName = listItem.getName();
-                    boolean contains = false;
-                    for (ShoppingListItem item: shoppingListItems) {
-                        if (item.getName().equals(itemName)) {
-                            contains = true;
-                        }
-                    }
-                    if (!contains) {
-                        shoppingListItems.add(listItem);
-                    }
-                }
-                adapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        }); */
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,50 +112,72 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         //retrieving current shopping list data in firebase
         //when clicking buyItems, removes item(s) from list, listview, and database.
         buyItemsButton.setOnClickListener(new View.OnClickListener() {
+            ArrayList<Integer> positionsList = new ArrayList<>();
             @Override
             public void onClick(View v) {
-                //
-                for (ShoppingListItem listItem: shoppingListItems) {
-                    if (listItem.getChecked()) {
+                for (ShoppingListItem item: shoppingListItems) {
+                    if (item.getChecked()) {
                         //add item to pantry, borrowed from IngredientScreen lol
-                        String ingredientName = listItem.getName();
+                        String ingredientName = item.getName();
                         try {
-                            double quantity = listItem.getQuantity();
-                            double calories = 0;
+                            double quantity = item.getQuantity();
+                            double calories = item.getCalories();
                             String expirationDate = null;
 
-                            if (currentUser != null && quantity > 0) {
-                                DatabaseReference ingredientsRef = FirebaseDatabase.getInstance()
-                                        .getReference()
-                                        .child("users").child(currentUser.getUid())
-                                        .child("ingredients");
-                                Query query = ingredientsRef.orderByChild("name")
-                                        .equalTo(ingredientName);
-                                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (!dataSnapshot.exists()) {
-                                            // Ingredient does not exist, add new ingredient
-                                            ingredientsRef.push()
-                                                    .setValue(new Ingredient(ingredientName,
-                                                    quantity, calories, expirationDate));
-                                        }
+                            DatabaseReference ingredientsRef = FirebaseDatabase.getInstance()
+                                    .getReference()
+                                    .child("users").child(currentUser.getUid())
+                                    .child("ingredients");
+                            Query query = ingredientsRef.orderByChild("name")
+                                    .equalTo(ingredientName);
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (!dataSnapshot.exists()) {
+                                        // Ingredient does not exist, add new ingredient
+                                        ingredientsRef.push()
+                                                .setValue(new Ingredient(ingredientName,
+                                                quantity, calories, expirationDate));
                                     }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        // nothing needed at the moment
-                                    }
-                                });
-                                int position = shoppingListItems.indexOf(listItem);
-                                adapter.removeItem(position);
-                                adapter.notifyDataSetChanged();
-                            }
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // nothing needed at the moment
+                                }
+                            });
+                            int position = shoppingListItems.indexOf(item);
+                            positionsList.add(position);
+
                         } catch (NumberFormatException e) {
                             // nothing needed at the moment
                         }
-                        adapter.notifyDataSetChanged();
+
+
                     }
                 }
+                DatabaseReference listRef = FirebaseDatabase.getInstance().getReference()
+                        .child("users").child(currentUser.getUid()).child("shopping_list");
+                for (Integer posit: positionsList) {
+                    String name = shoppingListItems.get(posit).getName();
+                    Query query = listRef.orderByChild("name").equalTo(name);
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snappy: dataSnapshot.getChildren()) {
+                                snappy.getRef().removeValue();
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // nothing needed at the moment
+                        }
+                    });
+
+
+                    shoppingListItems.remove((int) posit);
+                    System.out.println("removed");
+                }
+                adapter.notifyDataSetChanged();
 
             }
         });
@@ -191,9 +193,9 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         builder.setView(customLayout);
 
         // EditText variables initialization
-        EditText nameField = customLayout.findViewById(R.id.ingredientNameEditText);
-        EditText quantityField = customLayout.findViewById(R.id.ingredientQuantityEditText);
-        EditText caloriesField = customLayout.findViewById(R.id.caloriesPerServingEditText);
+        EditText nameField = customLayout.findViewById(R.id.itemName);
+        EditText quantityField = customLayout.findViewById(R.id.itemQuantity);
+        EditText caloriesField = customLayout.findViewById(R.id.itemCalories);
 
         // Add action button
         builder.setPositiveButton("Add", (dialog, id) -> {
@@ -202,6 +204,7 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                 double quantity = Double.parseDouble(quantityField.getText().toString().trim());
                 double calories = Double.parseDouble(caloriesField.getText().toString().trim());
                 int quantityInt = (int) quantity;
+                int caloriesInt = (int) calories;
 
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currentUser != null && quantity > 0
@@ -214,7 +217,7 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                             if (!snapshot.exists()) {
                                 //item is not in shopping list, add it
                                 ShoppingListItem newItem = new
-                                        ShoppingListItem(itemName, quantityInt);
+                                        ShoppingListItem(itemName, quantityInt, caloriesInt);
                                 mDatabase.push().setValue(newItem);
                                 shoppingListItems.add(newItem);
                             } else if (snapshot.exists()) {
