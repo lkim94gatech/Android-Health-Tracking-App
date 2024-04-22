@@ -166,6 +166,7 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
 
                             }
                             adapter.notifyDataSetChanged();
+
                             shoppingListItem.setText("");
                             shoppingListQuantity.setText("");
 
@@ -195,7 +196,50 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                 //
                 for (ShoppingListItem listItem: shoppingListItems) {
                     if (listItem.getChecked()) {
-                        //remove from list and add to pantry.
+                        //add item to pantry, borrowed from IngredientScreen lol
+                        String ingredientName = listItem.getName();
+                        try {
+                            double quantity = listItem.getQuantity();
+                            double calories = 0;
+                            String expirationDate = null;
+
+                            if (currentUser != null && quantity > 0) {
+                                DatabaseReference ingredientsRef = FirebaseDatabase.getInstance().getReference()
+                                        .child("users").child(currentUser.getUid()).child("ingredients");
+                                Query query = ingredientsRef.orderByChild("name").equalTo(ingredientName);
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (!dataSnapshot.exists()) {
+                                            // Ingredient does not exist, add new ingredient
+                                            ingredientsRef.push().setValue(new Ingredient(ingredientName,
+                                                    quantity, calories, expirationDate));
+                                        }
+                                        // If ingredient exists, do nothing
+                                        // maybe later add error pop up?? but not necessary right now
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        // nothing needed at the moment
+                                    }
+
+                                });
+                                int position = shoppingListItems.indexOf(listItem);
+                                adapter.removeItem(position);
+                                adapter.notifyDataSetChanged();
+                            }
+                        } catch (NumberFormatException e) {
+                            // nothing needed at the moment
+                        }
+                        adapter.notifyDataSetChanged();
+
+
+
+
+
+
+
                     }
                 }
 
