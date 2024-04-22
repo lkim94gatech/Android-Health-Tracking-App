@@ -114,10 +114,6 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
             ArrayList<Integer> positionsList = new ArrayList<>();
             @Override
             public void onClick(View v) {
-                //debugging
-                for (ShoppingListItem item: shoppingListItems){
-                    System.out.println(item.toString());
-                }
                 for (ShoppingListItem item: shoppingListItems) {
                     if (item.getChecked()) {
                         //add item to pantry, borrowed from IngredientScreen lol
@@ -158,7 +154,25 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
 
                     }
                 }
+                DatabaseReference listRef = FirebaseDatabase.getInstance().getReference()
+                        .child("users").child(currentUser.getUid()).child("shopping_list");
                 for (Integer posit: positionsList) {
+                    String name = shoppingListItems.get(posit).getName();
+                    Query query = listRef.orderByChild("name").equalTo(name);
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snappy: dataSnapshot.getChildren()) {
+                                snappy.getRef().removeValue();
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // nothing needed at the moment
+                        }
+                    });
+
+
                     shoppingListItems.remove((int) posit);
                     System.out.println("removed");
                 }
