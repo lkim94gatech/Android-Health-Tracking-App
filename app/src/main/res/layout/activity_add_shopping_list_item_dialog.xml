@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/ingredientQuantityEditText"
+        android:id="@+id/itemQuantity"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -13,10 +13,10 @@
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ingredientNameEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/itemName" />
 
     <EditText
-        android:id="@+id/ingredientNameEditText"
+        android:id="@+id/itemName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Ingredient Name"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/caloriesPerServingEditText"
+        android:id="@+id/itemCalories"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -34,5 +34,5 @@
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ingredientQuantityEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/itemQuantity" />
 </androidx.constraintlayout.widget.ConstraintLayout>

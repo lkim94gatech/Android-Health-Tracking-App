@@ -286,7 +286,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                                                 mDatabase.child("shopping_list")
                                                         .push().setValue(new
                                                                 ShoppingListItem(name,
-                                                                finalQuantity));
+                                                                finalQuantity, 0));
                                             }
                                         }
                                     }

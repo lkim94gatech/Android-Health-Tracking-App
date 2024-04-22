@@ -3,16 +3,19 @@ package com.example.a2340project;
 public class ShoppingListItem {
     private String name;
     private int quantity;
+    private int calories;
     private boolean checked;
 
-    public ShoppingListItem(String name, int quantity) {
+    public ShoppingListItem(String name, int quantity, int calories) {
         this.name = name;
         this.quantity = quantity;
         this.checked = false;
+        this.calories = calories;
     }
     public ShoppingListItem() {
         this.name = "";
         this.quantity = 0;
+        this.calories = 0;
         this.checked = false;
 
     }
@@ -25,6 +28,7 @@ public class ShoppingListItem {
     public void setChecked(boolean checked) {
         this.checked = checked;
     }
+    public void setCalories(int calories){this.calories = calories;}
     public String getName() {
         return this.name;
     }
@@ -35,4 +39,5 @@ public class ShoppingListItem {
     public boolean getChecked() {
         return this.checked;
     }
+    public int getCalories(){return this.calories;}
 }
