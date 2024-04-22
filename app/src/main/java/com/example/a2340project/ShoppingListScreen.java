@@ -83,7 +83,6 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 for (DataSnapshot data : snapshot.getChildren()) {
                     String itemName = data.child("name").getValue().toString();
                     int itemQuantity = Integer.parseInt(data.child("quantity")
@@ -95,9 +94,11 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                 }
                 adapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 return;
+                // cancel handling (not needed atm)
             }
         });
         adapter = new ShoppingListAdapter(this, shoppingListItems, this);
