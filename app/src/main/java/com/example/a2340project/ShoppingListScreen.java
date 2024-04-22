@@ -82,27 +82,25 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChildren()) {
-                    for (DataSnapshot data : snapshot.getChildren()) {
-                        String itemName = data.child("name").getValue().toString();
-                        int itemQuantity = Integer.parseInt(data.child("quantity")
-                                .getValue().toString());
-                        shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity));
-                    }
-                } else {
-                    mDatabase.push().setValue(new ShoppingListItem("Milk", 1));
-                    mDatabase.push().setValue(new ShoppingListItem("Cereal", 1));
-                    shoppingListItems.add(new ShoppingListItem("Milk", 1));
-                    shoppingListItems.add(new ShoppingListItem("Cereal", 1));
+                shoppingListItems.clear(); // Clear existing data
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    String itemName = data.child("name").getValue().toString();
+                    int itemQuantity = Integer.parseInt(data.child("quantity")
+                            .getValue().toString());
+                    shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity));
                 }
+                adapter.notifyDataSetChanged(); // Notify adapter of data change
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 return;
+                // cancel handling (not needed atm)
             }
         });
         adapter = new ShoppingListAdapter(this, shoppingListItems, this);
         recyclerView.setAdapter(adapter);
+
         /* mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
