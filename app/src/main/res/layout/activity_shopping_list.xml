@@ -47,40 +47,16 @@
             android:text="Shopping List"
             android:textSize="60sp" />
 
-        <EditText
-            android:id="@+id/addShoppingListItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Item Name" />
-
-        <EditText
-            android:id="@+id/addShoppingListQuantity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Item Quantity" />
-
         <Button
             android:id="@+id/shoppingListAddButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add to Shopping List" />
-        <TextView
-            android:id="@+id/ShoppingListError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Item name or quantity Contains Illegal Characters"
-            android:textAlignment="center"
-            android:textColor="#FF0000"
-            android:textColorHint="#FF0000"
-            android:visibility="gone"
-            tools:layout_editor_absoluteX="51dp"
-            tools:layout_editor_absoluteY="272dp"
-            tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/shoppingList"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="461dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/viewTitle" />
