@@ -10,6 +10,12 @@ public class ShoppingListItem {
         this.quantity = quantity;
         this.checked = false;
     }
+    public ShoppingListItem() {
+        this.name = "";
+        this.quantity = 0;
+        this.checked = false;
+
+    }
     public void setName(String name) {
         this.name = name;
     }

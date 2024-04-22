@@ -16,14 +16,14 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         .ShoppingListViewHolder> {
 
     private Context context;
-    private ArrayList<ShoppingListItem> listItemArray;
+    private ArrayList<ShoppingListItem> shoppingListItems;
 
     private final RecyclerViewInterface recyclerInterface;
 
-    public ShoppingListAdapter(Context context, ArrayList<ShoppingListItem> listItemArray,
+    public ShoppingListAdapter(Context context, ArrayList<ShoppingListItem> shoppingListItems,
                                  RecyclerViewInterface recyclerInterface) {
         this.context = context;
-        this.listItemArray = listItemArray;
+        this.shoppingListItems = shoppingListItems;
         this.recyclerInterface = recyclerInterface;
     }
 
@@ -37,21 +37,23 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ShoppingListViewHolder holder, int position) {
-        ShoppingListItem listItem = listItemArray.get(position);
+        ShoppingListItem listItem = shoppingListItems.get(position);
         holder.itemName.setText(listItem.getName());
         holder.itemQuantity.setText(String.valueOf(listItem.getQuantity()));
-        holder.itemCheckBox.setChecked(listItem.getChecked());
-
         //sets check status for item when checkbox is clicked
         holder.itemCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             listItem.setChecked(holder.itemCheckBox.isChecked());
-            System.out.println("checked!h");
         });
+    }
+
+    public void removeItem(int position) {
+        shoppingListItems.remove(position);
+        ShoppingListAdapter.super.notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return listItemArray.size();
+        return shoppingListItems.size();
     }
 
     public static class ShoppingListViewHolder extends RecyclerView.ViewHolder {
