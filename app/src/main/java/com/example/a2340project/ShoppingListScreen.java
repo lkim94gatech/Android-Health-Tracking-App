@@ -2,6 +2,7 @@ package com.example.a2340project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.AdapterView;
@@ -85,14 +86,32 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         shoppingListItems = new ArrayList<>();
-        adapter = new ShoppingListAdapter(this, shoppingListItems, this);
-        recyclerView.setAdapter(adapter);
+
 
         // getting firebase instance
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(currentUser.getUid()).child("shopping_list");
+
+        // set up recycler view
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    String itemName = data.child("name").getValue().toString();
+                    int itemQuantity = Integer.parseInt(data.child("quantity").getValue().toString());
+                    shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                return;
+            }
+        });
+        adapter = new ShoppingListAdapter(this, shoppingListItems, this);
+        recyclerView.setAdapter(adapter);
 
 
         /* mDatabase.addValueEventListener(new ValueEventListener() {
