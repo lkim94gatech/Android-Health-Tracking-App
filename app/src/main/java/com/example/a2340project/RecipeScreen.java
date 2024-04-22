@@ -80,6 +80,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 ingredients = ingredients.replaceAll("[}\\s]", "");
                 ingredients = ingredients.replaceAll("=", " - ");
                 String[] ingredientPairs = ingredients.split(",");
+                String[] ingred = ingredientPairs;
                 Dialog dialog = new Dialog(RecipeScreen.this);
                 if (recipe.getCanMake()) {
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeScreen.this,
@@ -110,49 +111,38 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                     buyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            DatabaseReference userRef = mDatabase.child("users").child(user);
-                            for (String pair : ingredientPairs) {
-                                String[] parts = pair.split(" - ");
-                                String itemName = parts[0];
-                                double quantities = Double.parseDouble(parts[1]);
-                                int quantity = (int) quantities;
-                                if (currentUser != null) {
-
-                                    String finalItemName = itemName;
-                                    final boolean[] found = {false};
-                                    mDatabase.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                                Ingredient ingredient = dataSnapshot
-                                                        .getValue(Ingredient.class);
-                                                String searchName = ingredient.getName();
-                                                if (finalItemName.equals(searchName) && ingredient.getQuantity() < quantity) {
-                                                    for (DataSnapshot dataSnapshot2 : snapshot.getChildren()) {
-                                                        ShoppingListItem shoppingListItemSearch = dataSnapshot
-                                                                .getValue(ShoppingListItem.class);
-                                                        if (finalItemName.equals(shoppingListItemSearch.getName())) {
-                                                            dataSnapshot2.getRef().removeValue();
-                                                            userRef.child("shopping_list").push()
-                                                                    .setValue(new ShoppingListItem(itemName, (int) ingredient.getQuantity() - quantity));
-                                                            found[0] = true;
+                            if (user != null) {
+                                mDatabase.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (String pair: ingred) {
+                                            String[] split = pair.split(" - ");
+                                            String name = split[0];
+                                            double quantity = Double.parseDouble(split[1]);
+                                            for (DataSnapshot snap: snapshot.child("ingredients").getChildren()) {
+                                                Ingredient ingredient = snap.getValue(Ingredient.class);
+                                                if (ingredient.getName().equals(name)) {
+                                                    int finalQuantity = (int) (quantity - ingredient.getQuantity());
+                                                    boolean found = false;
+                                                    for (DataSnapshot dataSnap: snapshot.child("shopping_list").getChildren()) {
+                                                        ShoppingListItem item = dataSnap.getValue(ShoppingListItem.class);
+                                                        if (item.getName().equals(name)) {
+                                                            found = true;
+                                                            dataSnap.getRef().setValue(finalQuantity + item.getQuantity());
                                                         }
                                                     }
-                                                } else if (finalItemName.equals(searchName)) {
-                                                    found[0] = true;
+                                                    if (!found) {
+                                                        mDatabase.child("shopping_list").push().setValue(new ShoppingListItem(name, finalQuantity));
+                                                    }
                                                 }
                                             }
                                         }
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            return;
-                                        }
-                                    });
-                                    if (!found[0]) {
-                                        userRef.child("shopping_list").push()
-                                                .setValue(new ShoppingListItem(itemName, quantity));
                                     }
-                                }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        return;
+                                    }
+                                });
                             }
                             dialog.dismiss();
                         }
