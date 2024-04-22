@@ -19,13 +19,7 @@
         <ListView
             android:id="@+id/ingredientList"
             android:layout_width="200dp"
-            android:layout_height="261dp" />
-
-        <Button
-            android:id="@+id/buyIngredientsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Buy Ingredients" />
+            android:layout_height="300dp" />
 
         <Button
             android:id="@+id/cookButton"
@@ -33,6 +27,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="Cook" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,8 +40,6 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private DatabaseReference mDatabase;
-    private EditText shoppingListItem;
-    private EditText shoppingListQuantity;
     private Button buyItemsButton;
     private Button addButton;
     private RecyclerView recyclerView;
@@ -78,10 +77,7 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         });
 
         // get text and buttons
-        shoppingListItem = findViewById(R.id.addShoppingListItem);
-        shoppingListQuantity = findViewById(R.id.addShoppingListQuantity);
         addButton = findViewById(R.id.shoppingListAddButton);
-        TextView error = findViewById(R.id.ShoppingListError);
         buyItemsButton = findViewById(R.id.buyItems);
 
         // recycler view
@@ -125,70 +121,11 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //pulls text from EditText
-                String itemName = shoppingListItem.getText().toString();
-                String itemQuantity = shoppingListQuantity.getText().toString();
-                if (itemName.contains("\\S+") || itemQuantity.contains("\\S+")
-                        || itemName.equals("") || itemQuantity.equals("")) {
-                    itemName = "";
-                    itemQuantity = "";
-                    error.setVisibility(View.VISIBLE);
-                } else {
-                    //converts quantity string to integer
-                    int quantityInt = Integer.parseInt(itemQuantity);
-                    String currentItemName = itemName;
-                    final boolean[] alreadyListed = {false};
-                    Query query = mDatabase.orderByChild("name").equalTo(itemName);
-                    query.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (!snapshot.exists()) {
-                                //item is not in shopping list, add it
-                                ShoppingListItem newItem = new ShoppingListItem(currentItemName, quantityInt);
-                                mDatabase.push().setValue(newItem);
-                                shoppingListItems.add(newItem);
-                            } else if (snapshot.exists()) {
-                                //update quantity
-
-                                for (DataSnapshot snap: snapshot.getChildren()) {
-                                    String dbName = String.valueOf(snap.child("name"));
-                                    if (dbName.equals(currentItemName)) {
-                                        snap.getRef().child("quantity").setValue(quantityInt);
-                                    }
-                                }
-
-                                for (ShoppingListItem listItem : shoppingListItems) {
-                                    if (listItem.getName().equals(currentItemName)) {
-                                            shoppingListItems.remove(listItem);
-                                    }
-                                }
-                                shoppingListItems.add(new ShoppingListItem(currentItemName, quantityInt));
-
-                            }
-                            adapter.notifyDataSetChanged();
-
-                            shoppingListItem.setText("");
-                            shoppingListQuantity.setText("");
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            return;
-                        }
-                    });
-                }
+                showAddItemDialog();
             }
         });
 
-
-
-
-
-
         //retrieving current shopping list data in firebase
-
-
         //when clicking buyItems, removes item(s) from list, listview, and database.
         buyItemsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,6 +182,78 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
 
             }
         });
+    }
+
+    private void showAddItemDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add New Shopping List Item");
+
+        // Inflate the custom layout
+        final View customLayout = getLayoutInflater()
+                .inflate(R.layout.activity_add_shopping_list_item_dialog, null);
+        builder.setView(customLayout);
+
+        // EditText variables initialization
+        EditText nameField = customLayout.findViewById(R.id.ingredientNameEditText);
+        EditText quantityField = customLayout.findViewById(R.id.ingredientQuantityEditText);
+        EditText caloriesField = customLayout.findViewById(R.id.caloriesPerServingEditText);
+
+        // Add action button
+        builder.setPositiveButton("Add", (dialog, id) -> {
+            String itemName = nameField.getText().toString().trim();
+            try {
+                double quantity = Double.parseDouble(quantityField.getText().toString().trim());
+                double calories = Double.parseDouble(caloriesField.getText().toString().trim());
+                int quantityInt = (int) quantity;
+
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null && quantity > 0
+                        && !itemName.contains("\\S+")
+                        && !itemName.equals("")) {
+                    Query query = mDatabase.orderByChild("name").equalTo(itemName);
+                    query.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (!snapshot.exists()) {
+                                //item is not in shopping list, add it
+                                ShoppingListItem newItem = new ShoppingListItem(itemName, quantityInt);
+                                mDatabase.push().setValue(newItem);
+                                shoppingListItems.add(newItem);
+                            } else if (snapshot.exists()) {
+                                //update quantity
+
+                                for (DataSnapshot snap: snapshot.getChildren()) {
+                                    String dbName = String.valueOf(snap.child("name"));
+                                    if (dbName.equals(itemName)) {
+                                        snap.getRef().child("quantity").setValue(quantityInt);
+                                    }
+                                }
+
+                                for (ShoppingListItem listItem : shoppingListItems) {
+                                    if (listItem.getName().equals(itemName)) {
+                                        listItem.setQuantity(quantityInt);
+                                    }
+                                }
+
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            return;
+                        }
+                    });
+                }
+            } catch (NumberFormatException e) {
+                // nothing needed at the moment
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public ArrayList<ShoppingListItem> getShoppingListItems() {return shoppingListItems;};

@@ -75,23 +75,20 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recipe recipe = (Recipe) parent.getItemAtPosition(position);
+                String ingredients = recipe.getIngredientMap().toString();
+                ingredients = ingredients.replaceAll("[{\\s]", "");
+                ingredients = ingredients.replaceAll("[}\\s]", "");
+                ingredients = ingredients.replaceAll("=", " - ");
+                String[] ingredientPairs = ingredients.split(",");
+                Dialog dialog = new Dialog(RecipeScreen.this);
                 if (recipe.getCanMake()) {
-                    String ingredients = recipe.getIngredientMap().toString();
-                    ingredients = ingredients.replaceAll("[{\\s]", "");
-                    ingredients = ingredients.replaceAll("[}\\s]", "");
-                    ingredients = ingredients.replaceAll("=", " - ");
-                    String[] ingredientPairs = ingredients.split(",");
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeScreen.this,
                             android.R.layout.simple_list_item_1, ingredientPairs);
-                    Dialog dialog = new Dialog(RecipeScreen.this);
                     dialog.setContentView(R.layout.activity_recipe_ingredients_dialog);
                     dialog.setTitle(recipe.getName());
                     ListView list = (ListView) dialog.findViewById(R.id.ingredientList);
                     list.setAdapter(adapter);
                     Button cookButton = dialog.findViewById(R.id.cookButton);
-
-                    // button for buying remaining ingredients
-                    Button buyButton = dialog.findViewById(R.id.buyIngredientsButton);
 
                     cookButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -109,17 +106,20 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                             dialog.dismiss();
                         }
                     });
-
-                    // action for buy button
+                } else {
+                    dialog.setContentView(R.layout.activity_recipe_buy_ingredients_dialog);
+                    dialog.setTitle(recipe.getName());
+                    // button for buying remaining ingredients
+                    Button buyButton = dialog.findViewById(R.id.buyIngredientsButton);
                     buyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            String userID = currentUser.getUid();
-                            DatabaseReference userRef = mDatabase.child("users").child(userID);
+                            DatabaseReference userRef = mDatabase.child("users").child(user);
                             for (String pair : ingredientPairs) {
                                 String[] parts = pair.split(" - ");
                                 String itemName = parts[0];
-                                int quantity = Integer.parseInt(parts[1]);
+                                double quantities = Double.parseDouble(parts[1]);
+                                int quantity = (int) quantities;
                                 if (currentUser != null) {
 
                                     String finalItemName = itemName;
@@ -137,7 +137,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                                                                 .getValue(ShoppingListItem.class);
                                                         if (finalItemName.equals(shoppingListItemSearch.getName())) {
                                                             dataSnapshot2.getRef().removeValue();
-                                                            userRef.child("Shopping List").push()
+                                                            userRef.child("shopping_list").push()
                                                                     .setValue(new ShoppingListItem(itemName, (int) ingredient.getQuantity() - quantity));
                                                             found[0] = true;
                                                         }
@@ -153,16 +153,16 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                                         }
                                     });
                                     if (!found[0]) {
-                                        userRef.child("Shopping List").push()
+                                        userRef.child("shopping_list").push()
                                                 .setValue(new ShoppingListItem(itemName, quantity));
                                     }
                                 }
                             }
+                            dialog.dismiss();
                         }
                     });
-                    // I messed up these brackets but I think we're good
-                    dialog.show();
                 }
+                dialog.show();
             }
         });
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
