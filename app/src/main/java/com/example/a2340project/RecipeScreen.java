@@ -100,10 +100,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                             }
                             arr.notifyDataSetChanged();
                             dialog.dismiss();
-                            updateRecipeList();
-                            checkForCookable();
-                            arr.notifyDataSetChanged();
-                            dialog.dismiss();
                         }
                     });
                 } else {
@@ -285,8 +281,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
     private void onCookButtonClick(Recipe recipe, String mealType) {
         MealPrep meal = MealFactory.createMeal(recipe, mealType);
         meal.cook();
-        checkForCookable();
-        updateRecipeList();
         Intent intent = getIntent();
         finish();
         startActivity(intent);
