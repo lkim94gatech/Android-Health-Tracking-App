@@ -22,7 +22,9 @@ public class ShoppingListItem {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    public void setChecked(boolean checked){this.checked = checked;}
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
     public String getName() {
         return this.name;
     }
@@ -30,5 +32,7 @@ public class ShoppingListItem {
         return this.quantity;
     }
 
-    public boolean getChecked() {return this.checked;}
+    public boolean getChecked() {
+        return this.checked;
+    }
 }

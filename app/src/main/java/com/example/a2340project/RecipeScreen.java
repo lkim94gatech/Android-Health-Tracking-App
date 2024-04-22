@@ -75,80 +75,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recipe recipe = (Recipe) parent.getItemAtPosition(position);
-                String ingredients = recipe.getIngredientMap().toString();
-                ingredients = ingredients.replaceAll("[{\\s]", "");
-                ingredients = ingredients.replaceAll("[}\\s]", "");
-                ingredients = ingredients.replaceAll("=", " - ");
-                String[] ingredientPairs = ingredients.split(",");
-                String[] ingred = ingredientPairs;
-                Dialog dialog = new Dialog(RecipeScreen.this);
-                if (recipe.getCanMake()) {
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeScreen.this,
-                            android.R.layout.simple_list_item_1, ingredientPairs);
-                    dialog.setContentView(R.layout.activity_recipe_ingredients_dialog);
-                    dialog.setTitle(recipe.getName());
-                    ListView list = (ListView) dialog.findViewById(R.id.ingredientList);
-                    list.setAdapter(adapter);
-                    Button cookButton = dialog.findViewById(R.id.cookButton);
-
-                    cookButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (Calendar.HOUR >= 15) {
-                                onCookButtonClick(recipe, "dinner");
-                            } else {
-                                onCookButtonClick(recipe, "breakfast");
-                            }
-                            arr.notifyDataSetChanged();
-                            dialog.dismiss();
-                        }
-                    });
-                } else {
-                    dialog.setContentView(R.layout.activity_recipe_buy_ingredients_dialog);
-                    dialog.setTitle(recipe.getName());
-                    // button for buying remaining ingredients
-                    Button buyButton = dialog.findViewById(R.id.buyIngredientsButton);
-                    buyButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (user != null) {
-                                mDatabase.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (String pair: ingred) {
-                                            String[] split = pair.split(" - ");
-                                            String name = split[0];
-                                            double quantity = Double.parseDouble(split[1]);
-                                            for (DataSnapshot snap: snapshot.child("ingredients").getChildren()) {
-                                                Ingredient ingredient = snap.getValue(Ingredient.class);
-                                                if (ingredient.getName().equals(name)) {
-                                                    int finalQuantity = (int) (quantity - ingredient.getQuantity());
-                                                    boolean found = false;
-                                                    for (DataSnapshot dataSnap: snapshot.child("shopping_list").getChildren()) {
-                                                        ShoppingListItem item = dataSnap.getValue(ShoppingListItem.class);
-                                                        if (item.getName().equals(name)) {
-                                                            found = true;
-                                                            dataSnap.getRef().setValue(finalQuantity + item.getQuantity());
-                                                        }
-                                                    }
-                                                    if (!found) {
-                                                        mDatabase.child("shopping_list").push().setValue(new ShoppingListItem(name, finalQuantity));
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-                                        return;
-                                    }
-                                });
-                            }
-                            dialog.dismiss();
-                        }
-                    });
-                }
-                dialog.show();
+                showItemDialog(recipe);
             }
         });
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -289,6 +216,93 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 arr.notifyDataSetChanged(); // Notify the adapter to refresh the ListView
             }
         });
+    }
+    private void showItemDialog(Recipe recipe) {
+        String ingredients = recipe.getIngredientMap().toString();
+        ingredients = ingredients.replaceAll("[{\\s]", "");
+        ingredients = ingredients.replaceAll("[}\\s]", "");
+        ingredients = ingredients.replaceAll("=", " - ");
+        String[] ingredientPairs = ingredients.split(",");
+        String[] ingred = ingredientPairs;
+        Dialog dialog = new Dialog(RecipeScreen.this);
+        if (recipe.getCanMake()) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeScreen.this,
+                    android.R.layout.simple_list_item_1, ingredientPairs);
+            dialog.setContentView(R.layout.activity_recipe_ingredients_dialog);
+            dialog.setTitle(recipe.getName());
+            ListView list = (ListView) dialog.findViewById(R.id.ingredientList);
+            list.setAdapter(adapter);
+            Button cookButton = dialog.findViewById(R.id.cookButton);
+
+            cookButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Calendar.HOUR >= 15) {
+                        onCookButtonClick(recipe, "dinner");
+                    } else {
+                        onCookButtonClick(recipe, "breakfast");
+                    }
+                    arr.notifyDataSetChanged();
+                    dialog.dismiss();
+                }
+            });
+        } else {
+            dialog.setContentView(R.layout.activity_recipe_buy_ingredients_dialog);
+            dialog.setTitle(recipe.getName());
+            // button for buying remaining ingredients
+            Button buyButton = dialog.findViewById(R.id.buyIngredientsButton);
+            buyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (user != null) {
+                        mDatabase.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (String pair: ingred) {
+                                    String[] split = pair.split(" - ");
+                                    String name = split[0];
+                                    double quantity = Double.parseDouble(split[1]);
+                                    for (DataSnapshot snap: snapshot
+                                            .child("ingredients").getChildren()) {
+                                        Ingredient ingredient = snap
+                                                .getValue(Ingredient.class);
+                                        if (ingredient.getName().equals(name)) {
+                                            int finalQuantity = (int) (quantity - ingredient
+                                                    .getQuantity());
+                                            boolean found = false;
+                                            for (DataSnapshot dataSnap: snapshot
+                                                    .child("shopping_list")
+                                                    .getChildren()) {
+                                                ShoppingListItem item = dataSnap
+                                                        .getValue(ShoppingListItem.class);
+                                                if (item.getName().equals(name)) {
+                                                    found = true;
+                                                    dataSnap.getRef()
+                                                            .setValue(finalQuantity
+                                                                    + item.getQuantity());
+                                                }
+                                            }
+                                            if (!found) {
+                                                mDatabase.child("shopping_list")
+                                                        .push().setValue(new
+                                                                ShoppingListItem(name,
+                                                                finalQuantity));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                return;
+                            }
+                        });
+                    }
+                    dialog.dismiss();
+                }
+            });
+        }
+        dialog.show();
     }
     private void showAddRecipeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

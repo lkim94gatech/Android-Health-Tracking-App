@@ -2,16 +2,9 @@ package com.example.a2340project;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.util.SparseBooleanArray;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -46,14 +39,10 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
     private RecyclerView recyclerView;
     private ArrayList<ShoppingListItem> shoppingListItems;
     private ShoppingListAdapter adapter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_list);
-
-        //nav buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setSelectedItemId(R.id.bottom_shopping);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -76,18 +65,14 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                 return buttonID == R.id.bottom_shopping;
             }
         });
-
         // get text and buttons
         addButton = findViewById(R.id.shoppingListAddButton);
         buyItemsButton = findViewById(R.id.buyItems);
-
         // recycler view
         recyclerView = findViewById(R.id.shoppingList);
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         shoppingListItems = new ArrayList<>();
-
-
         // getting firebase instance
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -100,7 +85,8 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                 if (snapshot.hasChildren()) {
                     for (DataSnapshot data : snapshot.getChildren()) {
                         String itemName = data.child("name").getValue().toString();
-                        int itemQuantity = Integer.parseInt(data.child("quantity").getValue().toString());
+                        int itemQuantity = Integer.parseInt(data.child("quantity")
+                                .getValue().toString());
                         shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity));
                     }
                 } else {
@@ -110,7 +96,6 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                     shoppingListItems.add(new ShoppingListItem("Cereal", 1));
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 return;
@@ -118,8 +103,6 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         });
         adapter = new ShoppingListAdapter(this, shoppingListItems, this);
         recyclerView.setAdapter(adapter);
-
-
         /* mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -142,14 +125,12 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
             public void onCancelled(@NonNull DatabaseError error) {
             }
         }); */
-
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showAddItemDialog();
             }
         });
-
         //retrieving current shopping list data in firebase
         //when clicking buyItems, removes item(s) from list, listview, and database.
         buyItemsButton.setOnClickListener(new View.OnClickListener() {
@@ -166,26 +147,26 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                             String expirationDate = null;
 
                             if (currentUser != null && quantity > 0) {
-                                DatabaseReference ingredientsRef = FirebaseDatabase.getInstance().getReference()
-                                        .child("users").child(currentUser.getUid()).child("ingredients");
-                                Query query = ingredientsRef.orderByChild("name").equalTo(ingredientName);
+                                DatabaseReference ingredientsRef = FirebaseDatabase.getInstance()
+                                        .getReference()
+                                        .child("users").child(currentUser.getUid())
+                                        .child("ingredients");
+                                Query query = ingredientsRef.orderByChild("name")
+                                        .equalTo(ingredientName);
                                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         if (!dataSnapshot.exists()) {
                                             // Ingredient does not exist, add new ingredient
-                                            ingredientsRef.push().setValue(new Ingredient(ingredientName,
+                                            ingredientsRef.push()
+                                                    .setValue(new Ingredient(ingredientName,
                                                     quantity, calories, expirationDate));
                                         }
-                                        // If ingredient exists, do nothing
-                                        // maybe later add error pop up?? but not necessary right now
                                     }
-
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
                                         // nothing needed at the moment
                                     }
-
                                 });
                                 int position = shoppingListItems.indexOf(listItem);
                                 adapter.removeItem(position);
@@ -195,13 +176,6 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                             // nothing needed at the moment
                         }
                         adapter.notifyDataSetChanged();
-
-
-
-
-
-
-
                     }
                 }
 
@@ -241,7 +215,8 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (!snapshot.exists()) {
                                 //item is not in shopping list, add it
-                                ShoppingListItem newItem = new ShoppingListItem(itemName, quantityInt);
+                                ShoppingListItem newItem = new
+                                        ShoppingListItem(itemName, quantityInt);
                                 mDatabase.push().setValue(newItem);
                                 shoppingListItems.add(newItem);
                             } else if (snapshot.exists()) {
@@ -253,17 +228,14 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                                         snap.getRef().child("quantity").setValue(quantityInt);
                                     }
                                 }
-
                                 for (ShoppingListItem listItem : shoppingListItems) {
                                     if (listItem.getName().equals(itemName)) {
                                         listItem.setQuantity(quantityInt);
                                     }
                                 }
-
                             }
                             adapter.notifyDataSetChanged();
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
                             return;
@@ -281,7 +253,9 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         dialog.show();
     }
 
-    public ArrayList<ShoppingListItem> getShoppingListItems() {return shoppingListItems;};
+    public ArrayList<ShoppingListItem> getShoppingListItems() {
+        return shoppingListItems;
+    };
     public void onItemClick(int pos) {
         ShoppingListItem item = shoppingListItems.get(pos);
     }
