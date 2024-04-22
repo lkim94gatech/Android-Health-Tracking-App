@@ -97,10 +97,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                             }
                             arr.notifyDataSetChanged();
                             dialog.dismiss();
-                            updateRecipeList();
-                            checkForCookable();
-                            arr.notifyDataSetChanged();
-                            dialog.dismiss();
                         }
                     });
                     dialog.show();
