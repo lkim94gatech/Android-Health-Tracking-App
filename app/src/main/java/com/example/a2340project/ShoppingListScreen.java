@@ -93,15 +93,21 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         currentUser = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(currentUser.getUid()).child("shopping_list");
-
         // set up recycler view
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    String itemName = data.child("name").getValue().toString();
-                    int itemQuantity = Integer.parseInt(data.child("quantity").getValue().toString());
-                    shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity));
+                if (snapshot.hasChildren()) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        String itemName = data.child("name").getValue().toString();
+                        int itemQuantity = Integer.parseInt(data.child("quantity").getValue().toString());
+                        shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity));
+                    }
+                } else {
+                    mDatabase.push().setValue(new ShoppingListItem("Milk", 1));
+                    mDatabase.push().setValue(new ShoppingListItem("Cereal", 1));
+                    shoppingListItems.add(new ShoppingListItem("Milk", 1));
+                    shoppingListItems.add(new ShoppingListItem("Cereal", 1));
                 }
             }
 
