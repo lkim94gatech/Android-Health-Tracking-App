@@ -134,9 +134,12 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         buyItemsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
+                for (ShoppingListItem item : shoppingListItems) {
+                    System.out.println(item.getName());
+                }
                 for (ShoppingListItem listItem: shoppingListItems) {
                     if (listItem.getChecked()) {
+                        String itemName = listItem.getName();
                         //add item to pantry, borrowed from IngredientScreen lol
                         String ingredientName = listItem.getName();
                         try {
@@ -174,6 +177,25 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                             // nothing needed at the moment
                         }
                         adapter.notifyDataSetChanged();
+
+                        String itemName2 = listItem.getName();
+                        Query query = mDatabase.orderByChild("name").equalTo(itemName2);
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    // Remove the item from the database
+                                    snapshot.getRef().removeValue();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Handle onCancelled
+                            }
+                        });
+
+
                     }
                 }
 
