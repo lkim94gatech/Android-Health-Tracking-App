@@ -61,6 +61,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         private TextView itemName;
         private TextView itemQuantity;
         private CheckBox itemCheckBox;
+        private TextView itemCalories;
         private static RecyclerViewInterface recyclerInterface;
 
         public ShoppingListViewHolder(@NonNull View itemView,
@@ -71,6 +72,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             itemName = itemView.findViewById(R.id.itemName);
             itemQuantity = itemView.findViewById(R.id.itemQuantity);
             itemCheckBox = itemView.findViewById(R.id.itemCheckBox);
+            itemCalories = itemView.findViewById(R.id.itemCalories);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
