@@ -8,7 +8,6 @@ import android.widget.EditText;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
