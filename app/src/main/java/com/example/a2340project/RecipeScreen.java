@@ -71,7 +71,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         recipeListView.setAdapter(arr);
         checkForCookable();
         updateRecipeList();
-        //chatgpt
         recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -79,7 +78,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 showItemDialog(recipe);
             }
         });
-        //chatgpt
         recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
