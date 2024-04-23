@@ -71,6 +71,15 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         recipeListView.setAdapter(arr);
         checkForCookable();
         updateRecipeList();
+        //chatgpt
+        recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Recipe recipe = (Recipe) parent.getItemAtPosition(position);
+                showItemDialog(recipe);
+            }
+        });
+        //chatgpt
         recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -217,6 +226,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
             }
         });
     }
+
     private void showItemDialog(Recipe recipe) {
         String ingredients = recipe.getIngredientMap().toString();
         ingredients = ingredients.replaceAll("[{\\s]", "");
@@ -255,48 +265,42 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
                 @Override
                 public void onClick(View v) {
                     if (user != null) {
-                        mDatabase.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (String pair: ingred) {
-                                    String[] split = pair.split(" - ");
-                                    String name = split[0];
-                                    double quantity = Double.parseDouble(split[1]);
-                                    for (DataSnapshot snap: snapshot
-                                            .child("ingredients").getChildren()) {
-                                        Ingredient ingredient = snap
-                                                .getValue(Ingredient.class);
-                                        if (ingredient.getName().equals(name)) {
-                                            int finalQuantity = (int) (quantity - ingredient
-                                                    .getQuantity());
+                        FirebaseDatabase.getInstance().getReference()
+                                .child("users").child(user)
+                                .child("shopping_list").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        Map<String, Double> recipeIngredients = recipe.getIngredientMap();
+                                        for (Map.Entry<String, Double> entry : recipeIngredients.entrySet()) {
+                                            String ingredientName = entry.getKey();
+                                            Double quantityNeeded = entry.getValue();
+
                                             boolean found = false;
-                                            for (DataSnapshot dataSnap: snapshot
-                                                    .child("shopping_list")
-                                                    .getChildren()) {
-                                                ShoppingListItem item = dataSnap
-                                                        .getValue(ShoppingListItem.class);
-                                                if (item.getName().equals(name)) {
+                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                ShoppingListItem item = snapshot.getValue(ShoppingListItem.class);
+                                                if (item.getName().equals(ingredientName)) {
+                                                    // Ingredient already exists in the shopping list, update quantity
+                                                    snapshot.getRef().child("quantity").setValue(item.getQuantity() + quantityNeeded);
                                                     found = true;
-                                                    dataSnap.getRef()
-                                                            .setValue(finalQuantity
-                                                                    + item.getQuantity());
+                                                    break;
                                                 }
                                             }
+
                                             if (!found) {
-                                                mDatabase.child("shopping_list")
-                                                        .push().setValue(new
-                                                                ShoppingListItem(name,
-                                                                finalQuantity, 0));
+                                                // Ingredient not found in shopping list, add it
+                                                FirebaseDatabase.getInstance().getReference()
+                                                        .child("users").child(user)
+                                                        .child("shopping_list").push()
+                                                        .setValue(new ShoppingListItem(ingredientName, quantityNeeded.intValue(), 0));
                                             }
                                         }
                                     }
-                                }
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                return;
-                            }
-                        });
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        // Handle onCancelled event
+                                    }
+                                });
                     }
                     dialog.dismiss();
                 }
@@ -304,6 +308,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer {
         }
         dialog.show();
     }
+
     private void showAddRecipeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add New Recipe");

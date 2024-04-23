@@ -80,35 +80,40 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         mDatabase = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(currentUser.getUid()).child("shopping_list");
         // set up recycler view
+        adapter = new ShoppingListAdapter(this, shoppingListItems, this);
+        recyclerView.setAdapter(adapter);
+
+        // retrieving current shopping list data in firebase
+        // This section should be moved below the adapter initialization
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                shoppingListItems.clear(); // Clear the list before adding items
                 for (DataSnapshot data : snapshot.getChildren()) {
                     String itemName = data.child("name").getValue().toString();
                     int itemQuantity = Integer.parseInt(data.child("quantity")
                             .getValue().toString());
-                    int itemCalories = 0;
+                    int itemCalories = Integer.parseInt(data.child("calories")
+                            .getValue().toString());
 
                     shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity, itemCalories));
-
                 }
-                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged(); // Notify adapter after updating the list
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                return;
                 // cancel handling (not needed atm)
             }
         });
-        adapter = new ShoppingListAdapter(this, shoppingListItems, this);
-        recyclerView.setAdapter(adapter);
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showAddItemDialog();
             }
         });
+
         //retrieving current shopping list data in firebase
         //when clicking buyItems, removes item(s) from list, listview, and database.
         buyItemsButton.setOnClickListener(new View.OnClickListener() {
@@ -210,38 +215,48 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                 if (currentUser != null && quantity > 0
                         && !itemName.contains("\\S+")
                         && !itemName.equals("")) {
-                    Query query = mDatabase.orderByChild("name").equalTo(itemName);
-                    query.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (!snapshot.exists()) {
-                                //item is not in shopping list, add it
-                                ShoppingListItem newItem = new
-                                        ShoppingListItem(itemName, quantityInt, caloriesInt);
-                                mDatabase.push().setValue(newItem);
-                                shoppingListItems.add(newItem);
-                            } else if (snapshot.exists()) {
-                                //update quantity
+                    boolean itemExists = false;
+                    for (ShoppingListItem item : shoppingListItems) {
+                        if (item.getName().equals(itemName)) {
+                            itemExists = true;
+                            break;
+                        }
+                    }
+                    if (!itemExists) {
+                        // Item is not in shopping list, add it
+                        ShoppingListItem newItem = new ShoppingListItem(itemName, quantityInt, caloriesInt);
+                        mDatabase.push().setValue(newItem);
+                        shoppingListItems.add(newItem);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Query query = mDatabase.orderByChild("name").equalTo(itemName);
+                        query.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    //update quantity
 
-                                for (DataSnapshot snap: snapshot.getChildren()) {
-                                    String dbName = String.valueOf(snap.child("name"));
-                                    if (dbName.equals(itemName)) {
-                                        snap.getRef().child("quantity").setValue(quantityInt);
+                                    for (DataSnapshot snap : snapshot.getChildren()) {
+                                        String dbName = String.valueOf(snap.child("name"));
+                                        if (dbName.equals(itemName)) {
+                                            snap.getRef().child("quantity").setValue(quantityInt);
+                                        }
+                                    }
+                                    for (ShoppingListItem listItem : shoppingListItems) {
+                                        if (listItem.getName().equals(itemName)) {
+                                            listItem.setQuantity(quantityInt);
+                                        }
                                     }
                                 }
-                                for (ShoppingListItem listItem : shoppingListItems) {
-                                    if (listItem.getName().equals(itemName)) {
-                                        listItem.setQuantity(quantityInt);
-                                    }
-                                }
+                                adapter.notifyDataSetChanged();
                             }
-                            adapter.notifyDataSetChanged();
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            return;
-                        }
-                    });
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                return;
+                            }
+                        });
+                    }
                 }
             } catch (NumberFormatException e) {
                 // nothing needed at the moment
