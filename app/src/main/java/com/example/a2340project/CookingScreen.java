@@ -2,25 +2,18 @@ package com.example.a2340project;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.Double4;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -46,7 +39,7 @@ public class CookingScreen extends AppCompatActivity {
         String ingredientsStr = null;
         if (extras != null) {
             ingredientsStr = extras.getString("ingredients");
-            ingredientsStr = ingredientsStr.substring(1, ingredientsStr.length()-1);
+            ingredientsStr = ingredientsStr.substring(1, ingredientsStr.length() - 1);
             recipeName = extras.getString("recipe");
         }
         Button backButton = findViewById(R.id.backToRecipe);
@@ -55,9 +48,11 @@ public class CookingScreen extends AppCompatActivity {
         });
 
         ListView ingredients = findViewById(R.id.listView2);
-        ArrayList<String> viewArray = new ArrayList<String>(Arrays.asList(ingredientsStr.split(",")));
+        ArrayList<String> viewArray = new
+                ArrayList<String>(Arrays.asList(ingredientsStr.split(",")));
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, viewArray);
+                new ArrayAdapter<>(this,
+                        android.R.layout.simple_list_item_1, viewArray);
         ingredients.setAdapter(adapter);
         Button cookButton = findViewById(R.id.cook);
         cookButton.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +60,8 @@ public class CookingScreen extends AppCompatActivity {
             public void onClick(View v) {
                 Map<String, Double> ingMap = new HashMap<>();
                 for (String strings : viewArray) {
-                    ArrayList<String> ingList = new ArrayList<String>(Arrays.asList(strings.split("-")));
+                    ArrayList<String> ingList = new
+                            ArrayList<String>(Arrays.asList(strings.split("-")));
                     Log.v("INGLIST", ingList.get(0));
                     ingMap.put(ingList.get(0).replace(" ", ""), Double.parseDouble(ingList.get(1)));
                 }

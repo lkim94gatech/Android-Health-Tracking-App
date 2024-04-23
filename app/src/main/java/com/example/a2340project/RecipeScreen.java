@@ -1,10 +1,8 @@
 package com.example.a2340project;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,13 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.a2340project.CookBook;
-import com.example.a2340project.Observer;
-import com.example.a2340project.PantryIngredientsModel;
-import com.example.a2340project.Recipe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,51 +26,46 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class RecipeScreen extends AppCompatActivity implements Observer{
+public class RecipeScreen extends AppCompatActivity implements Observer {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private String user;
     private ArrayList<Recipe> recipeList;
     private ArrayAdapter<Recipe> arr;
-    private Map<String,Double> pantry;
+    private Map<String, Double> pantry;
     private PantryIngredientsModel pantryIngredientsModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //IntializesView
         setContentView(R.layout.activity_recipe);
-        //Observer Registration
         pantryIngredientsModel = new PantryIngredientsModel();
         pantryIngredientsModel.registerObserver(this);
         //Firebase setup
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser().getUid();
-
-        Map<String,Double> pantry = new HashMap<>();
-        FirebaseDatabase.getInstance().getReference().child("users").child(user).child("ingredients").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot snap: snapshot.getChildren()){
-                    Ingredient ingredient = snap.getValue(Ingredient.class);
-                    String ingredientName = ingredient.getName();
-                    Double ingredientQuantity = ingredient.getQuantity();
-                    pantry.put(ingredientName, ingredientQuantity);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+        pantry = new HashMap<>();
+        FirebaseDatabase.getInstance().getReference().child("users").child(user)
+                .child("ingredients").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot snap: snapshot.getChildren()) {
+                            Ingredient ingredient = snap.getValue(Ingredient.class);
+                            String ingredientName = ingredient.getName();
+                            Double ingredientQuantity = ingredient.getQuantity();
+                            pantry.put(ingredientName, ingredientQuantity);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
         ListView recipeListView = findViewById(R.id.recipeList);
         Switch sort = findViewById(R.id.switch1);
         recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -96,7 +84,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
         //Recipes Fetched
         mDatabase = FirebaseDatabase.getInstance().getReference().child("cookbook database");
         //RecipeList populated tied to Array Adapter
-        ArrayList<Recipe> recipeList = new ArrayList<>();
+        recipeList = new ArrayList<>();
         mDatabase.orderByChild("name").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -117,10 +105,11 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
                     boolean makeable = true;
                     Map<String, Double> currRecipeIngredients = recipe.getIngredientMap();
                     for (String recipeIngredient : currRecipeIngredients.keySet()) {
-                        if (!pantry.containsKey(recipeIngredient)) { //if pantry doesn't have ingredient
+                        if (!pantry.containsKey(recipeIngredient)) {
                             makeable = false;
-                        } else {    //the ingredient is in pantry but do we have enough
-                            if (!(pantry.get(recipeIngredient) >= currRecipeIngredients.get(recipeIngredient))) {
+                        } else {
+                            if (!(pantry.get(recipeIngredient)
+                                    >= currRecipeIngredients.get(recipeIngredient))) {
                                 makeable = false;
                             }
                         }
@@ -152,82 +141,9 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recipe recipe = (Recipe) parent.getItemAtPosition(position);
-                Dialog dialog = new Dialog(RecipeScreen.this);
-                String ingredients = recipe.getIngredientMap().toString();
-                ingredients = ingredients.replaceAll("[{\\s]", "");
-                ingredients = ingredients.replaceAll("[}\\s]", "");
-                ingredients = ingredients.replaceAll("=", " - ");
-                String[] ingredientPairs = ingredients.split(",");
-                String[] ingred = ingredientPairs;
-                ArrayList<String> viewArray = new ArrayList<>();
-                for (String key : recipe.getIngredientMap().keySet()) {
-                    viewArray.add(key + "-" + recipe.getIngredientMap().get(key));
-                }
-                if (recipe.getCanMake()){
-                    Intent i = new Intent(RecipeScreen.this, CookingScreen.class);
-                    i.putExtra("ingredients", viewArray.toString());
-                    i.putExtra("recipe", recipe.getName());
-                    startActivity(i);
-                } else {
-                    dialog.setContentView(R.layout.activity_recipe_buy_ingredients_dialog);
-                    dialog.setTitle(recipe.getName());
-                    // button for buying remaining ingredients
-                    Button buyButton = dialog.findViewById(R.id.buyIngredientsButton);
-                    buyButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (user != null) {
-                                mDatabase.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (String pair: ingred) {
-                                            String[] split = pair.split(" - ");
-                                            String name = split[0];
-                                            double quantity = Double.parseDouble(split[1]);
-                                            for (DataSnapshot snap: snapshot
-                                                    .child("ingredients").getChildren()) {
-                                                Ingredient ingredient = snap
-                                                        .getValue(Ingredient.class);
-                                                if (ingredient.getName().equals(name)) {
-                                                    int finalQuantity = (int) (quantity - ingredient
-                                                            .getQuantity());
-                                                    boolean found = false;
-                                                    for (DataSnapshot dataSnap: snapshot
-                                                            .child("shopping_list")
-                                                            .getChildren()) {
-                                                        ShoppingListItem item = dataSnap
-                                                                .getValue(ShoppingListItem.class);
-                                                        if (item.getName().equals(name)) {
-                                                            found = true;
-                                                            dataSnap.getRef()
-                                                                    .setValue(finalQuantity
-                                                                            + item.getQuantity());
-                                                        }
-                                                    }
-                                                    if (!found) {
-                                                        mDatabase.child("shopping_list")
-                                                                .push().setValue(new
-                                                                        ShoppingListItem(name,
-                                                                        finalQuantity, 0));
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-                                        return;
-                                    }
-                                });
-                            }
-                            dialog.dismiss();
-                        }
-                    });
-                }
-                dialog.show();
+                itemClick(recipe);
             }
         });
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setSelectedItemId(R.id.bottom_recipes);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -250,6 +166,101 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
                 return buttonID == R.id.bottom_recipes;
             }
         });
+    }
+
+    private void itemClick(Recipe recipe) {
+        Dialog dialog = new Dialog(RecipeScreen.this);
+        String ingredients = recipe.getIngredientMap().toString();
+        ingredients = ingredients.replaceAll("[{\\s]", "");
+        ingredients = ingredients.replaceAll("[}\\s]", "");
+        ingredients = ingredients.replaceAll("=", " - ");
+        String[] ingredientPairs = ingredients.split(",");
+        ArrayList<String> viewArray = new ArrayList<>();
+        for (String key : recipe.getIngredientMap().keySet()) {
+            viewArray.add(key + " - " + recipe.getIngredientMap().get(key));
+        }
+        if (recipe.getCanMake()) {
+            Intent i = new Intent(RecipeScreen.this, CookingScreen.class);
+            i.putExtra("ingredients", viewArray.toString());
+            i.putExtra("recipe", recipe.getName());
+            startActivity(i);
+        } else {
+            dialog.setContentView(R.layout.activity_recipe_buy_ingredients_dialog);
+            dialog.setTitle(recipe.getName());
+            // button for buying remaining ingredients
+            Button buyButton = dialog.findViewById(R.id.buyIngredientsButton);
+            final String[] ingred = ingredientPairs;
+            buyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (user != null) {
+                        DatabaseReference userReference = mDatabase.getParent()
+                                .child("users").child(user);
+                        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (String pair: ingred) {
+                                    String[] split = pair.split(" - ");
+                                    String name = split[0];
+                                    double quantity = Math.abs(Double.parseDouble(split[1]));
+                                    int finalQuantity = (int) quantity;
+                                    boolean found = false;
+                                    for (DataSnapshot snap: snapshot
+                                            .child("ingredients").getChildren()) {
+                                        Ingredient ingredient = snap
+                                                .getValue(Ingredient.class);
+                                        if (ingredient.getName().equals(name)
+                                                && ingredient.getQuantity() < quantity) {
+                                            finalQuantity = (int) (quantity - ingredient
+                                                    .getQuantity());
+                                            for (DataSnapshot dataSnap : snapshot
+                                                    .child("shopping_list")
+                                                    .getChildren()) {
+                                                ShoppingListItem item = dataSnap
+                                                        .getValue(ShoppingListItem.class);
+                                                if (item.getName().equals(name)) {
+                                                    found = true;
+                                                    dataSnap.getRef().child("quantity")
+                                                            .setValue(finalQuantity
+                                                                    + item.getQuantity());
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (!found) {
+                                        boolean found2 = false;
+                                        for (DataSnapshot dataSnap : snapshot
+                                                .child("shopping_list")
+                                                .getChildren()) {
+                                            ShoppingListItem item = dataSnap
+                                                    .getValue(ShoppingListItem.class);
+                                            if (item.getName().equals(name)) {
+                                                found2 = true;
+                                                dataSnap.getRef().child("quantity")
+                                                        .setValue(finalQuantity
+                                                                + item.getQuantity());
+                                            }
+                                        }
+                                        if (!found2) {
+                                            userReference
+                                                    .child("shopping_list")
+                                                    .push().setValue(new
+                                                            ShoppingListItem(name, finalQuantity, 1));
+                                        }
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                return;
+                            }
+                        });
+                    }
+                    dialog.dismiss();
+                }
+            });
+        }
+        dialog.show();
     }
 
     @Override
@@ -288,8 +299,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
             });
         }
     }
-
-    // factory pattern
     private void onCookButtonClick(Recipe recipe, String mealType) {
         MealPrep meal = MealFactory.createMeal(recipe, mealType);
         meal.cook();
@@ -353,20 +362,27 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
                     if (user != null) {
                         FirebaseDatabase.getInstance().getReference()
                                 .child("users").child(user)
-                                .child("shopping_list").addListenerForSingleValueEvent(new ValueEventListener() {
+                                .child("shopping_list")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        Map<String, Double> recipeIngredients = recipe.getIngredientMap();
-                                        for (Map.Entry<String, Double> entry : recipeIngredients.entrySet()) {
+                                        Map<String, Double> recipeIngredients = recipe
+                                                .getIngredientMap();
+                                        for (Map.Entry<String, Double> entry
+                                                : recipeIngredients.entrySet()) {
                                             String ingredientName = entry.getKey();
                                             Double quantityNeeded = entry.getValue();
 
                                             boolean found = false;
-                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                                ShoppingListItem item = snapshot.getValue(ShoppingListItem.class);
+                                            for (DataSnapshot snapshot
+                                                    : dataSnapshot.getChildren()) {
+                                                ShoppingListItem item = snapshot
+                                                        .getValue(ShoppingListItem.class);
                                                 if (item.getName().equals(ingredientName)) {
-                                                    // Ingredient already exists in the shopping list, update quantity
-                                                    snapshot.getRef().child("quantity").setValue(item.getQuantity() + quantityNeeded);
+                                                    snapshot.getRef()
+                                                            .child("quantity")
+                                                            .setValue(item.getQuantity()
+                                                                    + quantityNeeded);
                                                     found = true;
                                                     break;
                                                 }
@@ -377,7 +393,9 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
                                                 FirebaseDatabase.getInstance().getReference()
                                                         .child("users").child(user)
                                                         .child("shopping_list").push()
-                                                        .setValue(new ShoppingListItem(ingredientName, quantityNeeded.intValue(), 0));
+                                                        .setValue(new
+                                                                ShoppingListItem(ingredientName,
+                                                                quantityNeeded.intValue(), 0));
                                             }
                                         }
                                     }

@@ -6,8 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -66,36 +67,25 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                 return buttonID == R.id.bottom_shopping;
             }
         });
-        // get text and buttons
         addButton = findViewById(R.id.shoppingListAddButton);
         buyItemsButton = findViewById(R.id.buyItems);
-        // recycler view
         recyclerView = findViewById(R.id.shoppingList);
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         shoppingListItems = new ArrayList<>();
-        // getting firebase instance
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(currentUser.getUid()).child("shopping_list");
-        // set up recycler view
         adapter = new ShoppingListAdapter(this, shoppingListItems, this);
         recyclerView.setAdapter(adapter);
-
-        // retrieving current shopping list data in firebase
-        // This section should be moved below the adapter initialization
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 shoppingListItems.clear(); // Clear the list before adding items
                 for (DataSnapshot data : snapshot.getChildren()) {
                     ShoppingListItem item = data.getValue(ShoppingListItem.class);
-                    String itemName = item.getName();
-                    int itemQuantity = item.getQuantity();
-                    int itemCalories = item.getCalories();
-
-                    shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity, itemCalories));
+                    shoppingListItems.add(item);
                 }
                 adapter.notifyDataSetChanged(); // Notify adapter after updating the list
             }
@@ -116,7 +106,7 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
         //retrieving current shopping list data in firebase
         //when clicking buyItems, removes item(s) from list, listview, and database.
         buyItemsButton.setOnClickListener(new View.OnClickListener() {
-            ArrayList<Integer> positionsList = new ArrayList<>();
+            private ArrayList<Integer> positionsList = new ArrayList<>();
             @Override
             public void onClick(View v) {
                 for (ShoppingListItem item: shoppingListItems) {
@@ -146,7 +136,9 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                                         for (DataSnapshot snap: dataSnapshot.getChildren()) {
                                             Ingredient ingredient = snap.getValue(Ingredient.class);
                                             if (ingredientName.equals(ingredient.getName())) {
-                                                snap.getRef().child("quantity").setValue(quantity + ingredient.getQuantity());
+                                                snap.getRef().child("quantity")
+                                                        .setValue(quantity + ingredient
+                                                                .getQuantity());
                                             }
                                         }
                                     }
@@ -156,14 +148,12 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                                     // nothing needed at the moment
                                 }
                             });
-                            int position = shoppingListItems.indexOf(item);
-                            positionsList.add(position);
-
                         } catch (NumberFormatException e) {
                             // nothing needed at the moment
                         }
-
-
+                        adapter.notifyDataSetChanged();
+                        int position = shoppingListItems.indexOf(item);
+                        positionsList.add(position);
                     }
                 }
                 DatabaseReference listRef = FirebaseDatabase.getInstance().getReference()
@@ -172,17 +162,17 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                     String name = shoppingListItems.get(posit).getName();
                     Query query = listRef.orderByChild("name").equalTo(name);
                         query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for (DataSnapshot snappy: dataSnapshot.getChildren()) {
-                                snappy.getRef().removeValue();
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snappy: dataSnapshot.getChildren()) {
+                                    snappy.getRef().removeValue();
+                                }
                             }
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            // nothing needed at the moment
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // nothing needed at the moment
+                            }
+                        });
 
 
                     shoppingListItems.remove((int) posit);
@@ -230,7 +220,8 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                     }
                     if (!itemExists) {
                         // Item is not in shopping list, add it
-                        ShoppingListItem newItem = new ShoppingListItem(itemName, quantityInt, caloriesInt);
+                        ShoppingListItem newItem = new ShoppingListItem(itemName,
+                                quantityInt, caloriesInt);
                         mDatabase.push().setValue(newItem);
                         shoppingListItems.add(newItem);
                         adapter.notifyDataSetChanged();

@@ -24,7 +24,9 @@ public class ShoppingListItem {
     public void setChecked(boolean checked) {
         this.checked = checked;
     }
-    public void setCalories(int calories){this.calories = calories;}
+    public void setCalories(int calories) {
+        this.calories = calories;
+    }
     public String getName() {
         return this.name;
     }
@@ -35,5 +37,7 @@ public class ShoppingListItem {
     public boolean getChecked() {
         return this.checked;
     }
-    public int getCalories(){return this.calories;}
+    public int getCalories() {
+        return this.calories;
+    }
 }
