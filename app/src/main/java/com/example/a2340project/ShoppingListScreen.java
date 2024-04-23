@@ -109,6 +109,7 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
             private ArrayList<Integer> positionsList = new ArrayList<>();
             @Override
             public void onClick(View v) {
+                ArrayList<ShoppingListItem> items = new ArrayList<>();
                 for (ShoppingListItem item: shoppingListItems) {
                     if (item.getChecked()) {
                         //add item to pantry, borrowed from IngredientScreen lol
@@ -151,15 +152,13 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                         } catch (NumberFormatException e) {
                             // nothing needed at the moment
                         }
-                        adapter.notifyDataSetChanged();
-                        int position = shoppingListItems.indexOf(item);
-                        positionsList.add(position);
+                        items.add(item);
                     }
                 }
                 DatabaseReference listRef = FirebaseDatabase.getInstance().getReference()
                         .child("users").child(currentUser.getUid()).child("shopping_list");
-                for (Integer posit: positionsList) {
-                    String name = shoppingListItems.get(posit).getName();
+                for (ShoppingListItem item: items) {
+                    String name = shoppingListItems.get(shoppingListItems.indexOf(item)).getName();
                     Query query = listRef.orderByChild("name").equalTo(name);
                         query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -175,7 +174,7 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                         });
 
 
-                    shoppingListItems.remove((int) posit);
+                    shoppingListItems.remove(item);
                     System.out.println("removed");
                 }
                 adapter.notifyDataSetChanged();
