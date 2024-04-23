@@ -35,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,24 +46,25 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    private String userId;
+    private String user;
     private ArrayList<Recipe> recipeList;
     private ArrayAdapter<Recipe> arr;
     private Map<String,Double> pantry;
+    private PantryIngredientsModel pantryIngredientsModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //IntializesView
         setContentView(R.layout.activity_recipe);
         //Observer Registration
-        PantryIngredientsModel pantryIngredientsModel = new PantryIngredientsModel();
+        pantryIngredientsModel = new PantryIngredientsModel();
         pantryIngredientsModel.registerObserver(this);
         //Firebase setup
         mAuth = FirebaseAuth.getInstance();
-        userId = mAuth.getCurrentUser().getUid();
+        user = mAuth.getCurrentUser().getUid();
 
         Map<String,Double> pantry = new HashMap<>();
-        FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("ingredients").addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("users").child(user).child("ingredients").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap: snapshot.getChildren()){
@@ -72,8 +74,12 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
                     pantry.put(ingredientName, ingredientQuantity);
                 }
             }
-
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
+        ListView recipeListView = findViewById(R.id.recipeList);
+        Switch sort = findViewById(R.id.switch1);
         recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -82,10 +88,9 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
             }
         });
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sortRecipeList(isChecked);
             }
         });
         //Recipes Fetched
@@ -130,12 +135,10 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
             }
         });
         arr = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, recipeList);
-        ListView recipeListView = findViewById(R.id.recipeList);
         recipeListView.setAdapter(arr);
 
-        //Buttons
+        //Buttonscshaw7@gatech.edu
         Button recipeButton = findViewById(R.id.addRecipeButton);
-        Switch sort = (Switch) findViewById(R.id.switch1);
         //Listeners
         recipeButton.setOnClickListener(v -> showAddRecipeDialog());
         sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -173,7 +176,7 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
                     buyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (userId != null) {
+                            if (user != null) {
                                 mDatabase.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -259,10 +262,6 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
         super.onResume();
     }
 
-    @Override
-    public void update() {
-
-    }
 
     private void sortRecipeList(boolean isChecked) {
         if (isChecked) {

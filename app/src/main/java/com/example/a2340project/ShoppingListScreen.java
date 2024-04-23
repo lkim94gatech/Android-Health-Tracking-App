@@ -90,11 +90,10 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 shoppingListItems.clear(); // Clear the list before adding items
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    String itemName = data.child("name").getValue().toString();
-                    int itemQuantity = Integer.parseInt(data.child("quantity")
-                            .getValue().toString());
-                    int itemCalories = Integer.parseInt(data.child("calories")
-                            .getValue().toString());
+                    ShoppingListItem item = data.getValue(ShoppingListItem.class);
+                    String itemName = item.getName();
+                    int itemQuantity = item.getQuantity();
+                    int itemCalories = item.getCalories();
 
                     shoppingListItems.add(new ShoppingListItem(itemName, itemQuantity, itemCalories));
                 }
@@ -143,6 +142,13 @@ public class ShoppingListScreen extends AppCompatActivity implements RecyclerVie
                                         ingredientsRef.push()
                                                 .setValue(new Ingredient(ingredientName,
                                                 quantity, calories, expirationDate));
+                                    } else {
+                                        for (DataSnapshot snap: dataSnapshot.getChildren()) {
+                                            Ingredient ingredient = snap.getValue(Ingredient.class);
+                                            if (ingredientName.equals(ingredient.getName())) {
+                                                snap.getRef().child("quantity").setValue(quantity + ingredient.getQuantity());
+                                            }
+                                        }
                                     }
                                 }
                                 @Override

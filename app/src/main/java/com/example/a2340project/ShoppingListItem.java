@@ -6,18 +6,14 @@ public class ShoppingListItem {
     private int calories;
     private boolean checked;
 
+    public ShoppingListItem() {
+
+    }
     public ShoppingListItem(String name, int quantity, int calories) {
         this.name = name;
         this.quantity = quantity;
         this.checked = false;
         this.calories = calories;
-    }
-    public ShoppingListItem() {
-        this.name = "";
-        this.quantity = 0;
-        this.calories = 0;
-        this.checked = false;
-
     }
     public void setName(String name) {
         this.name = name;
