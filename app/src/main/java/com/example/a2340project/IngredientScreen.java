@@ -173,7 +173,6 @@ public class IngredientScreen extends AppCompatActivity implements RecyclerViewI
                     }
                 });
             }
-
         });
 
         builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());

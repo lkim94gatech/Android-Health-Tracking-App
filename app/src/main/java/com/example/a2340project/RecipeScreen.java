@@ -73,6 +73,16 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
                 }
             }
 
+        });
+        recipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Recipe recipe = (Recipe) parent.getItemAtPosition(position);
+                showItemDialog(recipe);
+            }
+        });
+        sort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -279,6 +289,113 @@ public class RecipeScreen extends AppCompatActivity implements Observer{
             });
         }
     }
+
+    // factory pattern
+    private void onCookButtonClick(Recipe recipe, String mealType) {
+        MealPrep meal = MealFactory.createMeal(recipe, mealType);
+        meal.cook();
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+    @Override
+    public void update() {
+        // Logic to refresh the recipe list based on updated pantry ingredients
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Make sure the update is performed on the UI thread
+                recipeList.clear();
+                // This method 'getUpdatedRecipes()' needs to be defined in your
+                // PantryIngredientsModel class
+                recipeList.addAll(pantryIngredientsModel.getUpdatedRecipes());
+                arr.notifyDataSetChanged(); // Notify the adapter to refresh the ListView
+            }
+        });
+    }
+
+    private void showItemDialog(Recipe recipe) {
+        String ingredients = recipe.getIngredientMap().toString();
+        ingredients = ingredients.replaceAll("[{\\s]", "");
+        ingredients = ingredients.replaceAll("[}\\s]", "");
+        ingredients = ingredients.replaceAll("=", " - ");
+        String[] ingredientPairs = ingredients.split(",");
+        String[] ingred = ingredientPairs;
+        Dialog dialog = new Dialog(RecipeScreen.this);
+        if (recipe.getCanMake()) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(RecipeScreen.this,
+                    android.R.layout.simple_list_item_1, ingredientPairs);
+            dialog.setContentView(R.layout.activity_recipe_ingredients_dialog);
+            dialog.setTitle(recipe.getName());
+            ListView list = (ListView) dialog.findViewById(R.id.ingredientList);
+            list.setAdapter(adapter);
+            Button cookButton = dialog.findViewById(R.id.cookButton);
+
+            cookButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Calendar.HOUR >= 15) {
+                        onCookButtonClick(recipe, "dinner");
+                    } else {
+                        onCookButtonClick(recipe, "breakfast");
+                    }
+                    arr.notifyDataSetChanged();
+                    dialog.dismiss();
+                }
+            });
+        } else {
+            dialog.setContentView(R.layout.activity_recipe_buy_ingredients_dialog);
+            dialog.setTitle(recipe.getName());
+            // button for buying remaining ingredients
+            Button buyButton = dialog.findViewById(R.id.buyIngredientsButton);
+            buyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (user != null) {
+                        FirebaseDatabase.getInstance().getReference()
+                                .child("users").child(user)
+                                .child("shopping_list").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        Map<String, Double> recipeIngredients = recipe.getIngredientMap();
+                                        for (Map.Entry<String, Double> entry : recipeIngredients.entrySet()) {
+                                            String ingredientName = entry.getKey();
+                                            Double quantityNeeded = entry.getValue();
+
+                                            boolean found = false;
+                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                ShoppingListItem item = snapshot.getValue(ShoppingListItem.class);
+                                                if (item.getName().equals(ingredientName)) {
+                                                    // Ingredient already exists in the shopping list, update quantity
+                                                    snapshot.getRef().child("quantity").setValue(item.getQuantity() + quantityNeeded);
+                                                    found = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!found) {
+                                                // Ingredient not found in shopping list, add it
+                                                FirebaseDatabase.getInstance().getReference()
+                                                        .child("users").child(user)
+                                                        .child("shopping_list").push()
+                                                        .setValue(new ShoppingListItem(ingredientName, quantityNeeded.intValue(), 0));
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        // Handle onCancelled event
+                                    }
+                                });
+                    }
+                    dialog.dismiss();
+                }
+            });
+        }
+        dialog.show();
+    }
+
 
     private void showAddRecipeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
