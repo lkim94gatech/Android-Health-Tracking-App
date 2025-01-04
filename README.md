@@ -1,7 +1,7 @@
 # Health Tracking App: Android Studio Project
 
 ## Project Overview
-This health-tracking app was developed for Android devices as part of a team project. The app helps users monitor their health by tracking daily caloric intake, storing personal health data, and managing ingredients and recipes. It was implemented in four sprints, each focusing on distinct functionalities and improvements. The project utilized Android Studio for development and Firebase Realtime Database for backend support.  
+This health-tracking app was developed for Android devices as part of a team project for CS 2340 Objects and Desgin class. The app helps users monitor their health by tracking daily caloric intake, storing personal health data, and managing ingredients and recipes. It was implemented in four sprints, each focusing on distinct functionalities and improvements. The project utilized Android Studio for development and Firebase Realtime Database for backend support.  
 This project was collaboratively developed as a team using GitHub for version control, with regular pull requests, merges, and code reviews to ensure seamless integration of contributions.
 
 ---
